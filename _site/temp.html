@@ -1,0 +1,38 @@
+<!---
+1. Use standard R Markdown.
+2. Headings with "##" will be automatically turned into table of contents. Therefore, for longer tutorials please use this facility.
+3. Check that R studio will knit into an HTML document.
+4. You can contribute the .rmd file via GitHub (https://github.com/jonesor/learn-basta), **to the master branch ONLY**. To do that you must be a collaborator on the repository (contact me with your username), or you can fork the repository and send a pull request (https://help.github.com/articles/using-pull-requests/).
+5. Alternatively you can email me the *rmd file and associated files (e.g. any figures/diagrams.)
+6. I will then compile the site on my computer and push it to the gh-pages branch (which is where the website lives). You could also do this, but you will need to have Jekyll and pandoc installed.
+-->
+<h2 id="useful-functions">Other useful functions</h2>
+<h3>In caper</h3>
+<p><code>clade.members</code> - identify the members of a clade descending from a node.</p>
+<p><code>growTree</code> - simulate a tree with traits.</p>
+<h3>In ape</h3>
+<p><code>is.ultrametric</code> - tests whether a tree is ultrametric.</p>
+<p><code>axisPhylo</code> - adds a scale axis to a phylo plot.</p>
+<p><code>bind.tree</code> - binds two phylogenetic trees together into a single phylo object.</p>
+<p><code>branching.times</code> - gets the branching times for a phylogenetic tree.</p>
+<p><code>extract.clade</code> - extracts a clade from a tree.</p>
+<p><code>is.binary.tree</code> - tests whether the tree is binary.</p>
+<p><code>is.rooted</code> - tests whether the tree is rooted</p>
+<p><code>is.monophyletic</code> - tests whether the clade is monophyletic</p>
+<p><code>ltt.plot</code> - produces a lineages through time plot.</p>
+<p><code>mantel.test</code> - tests similarity of two matrices.</p>
+<p><code>root</code> - roots a phylogenetic tree.</p>
+<p><code>rotate</code> - swap sister clades.</p>
+<p><code>rtree</code> - generate random trees.</p>
+<p><code>rcoal</code> - generate random trees.</p>
+<p><code>vcv.phylo</code> - obtains the variance-covariance matrix of the tree.</p>
+<h2 id="datasets">Sample datasets</h2>
+<p>The phylogenetic packages in R come with some data that would be ideal for testing out some of these methods. I encourage you to explore them and practice some of the analyses that we’ve covered above.</p>
+<h3>In caper</h3>
+<p><code>IsaacEtAl</code> - The datafile contains species level phylogenies and accompanying data frames of nine variables for each of four mammalian orders (Primates, Carnivora, Chiroptera and Marsupialia).</p>
+<p><code>perissodactyla</code> - This is a comparative dataset on Perissodactyla taken from the examples include with the original CAIC program.</p>
+<p><code>shorebird</code> - This is a comparative dataset on the evolution of shorebird egg size taken from Lislevand and Thomas (2006).</p>
+<p><code>syrphidae</code> - A genus level phylogeny of the Syrphidae (sawflies) along with data on the species richness of each genus.</p>
+<p><code>BritishBirds</code> - The dataset contains a molecular phylogeny of 249 species of British birds and a data frame containing information on the conservation status of 181 of those species. The dataset is taken from Thomas (2008)</p>
+<h3>In geiger</h3>
+<p><code>geospiza</code> - Phylogenetic tree and morphological data for Darwin’s finches.</p>

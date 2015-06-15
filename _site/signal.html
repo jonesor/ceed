@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Plotting trees &middot; CEED Workshop</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="www/bootstrap.min.css" rel="stylesheet">
+    <link href="www/highlight.css" rel="stylesheet">
+    <link href="www/extras.css" rel="stylesheet">
+
+    <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700'
+      rel='stylesheet' type='text/css'>
+  </head>
+
+  <body>
+
+<style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+
+    <div class="container">
+
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Table of contents<b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu pull-right" role="menu">
+              <li><a href="Introduction.html">Introduction</a></li>
+
+<li class="dropdown-header">Basics</li>
+<li><a href="readingdata.html">Reading data</a></li>
+<li><a href="manipulatingtrees.html">Manipulating Trees</a></li>
+<li><a href="plottingtrees.html">Plotting Trees</a></li>
+<li><a href="phylogeneticsignal.html">Phylogenetic Signal</a></li>
+
+
+<li class="dropdown-header">Exercises</li>
+<li><a href="exercises.html">Exercises</a></li>
+<li><a href="signal.html">Signal in Demographic Traits</a></li>
+
+<li class="dropdown-header">More</li>
+<li><a href="usefulfunctionsanddata.html">Useful stuff</a></li>
+
+            </ul>
+          </li>
+        </ul>
+
+        <h3 class="muted"><a href="/ceed-workshop/">CEED Workshop Material</a> <small>by Owen Jones</small></h3>
+        <hr>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12 col-sm-3" id="nav">
+        <div class="well">
+         ...
+        </div>
+
+
+        <h4>Page contents</h4>
+          <ul class="list-unstyled" id="toc"></ul>
+
+          <hr>
+
+
+
+        </div>
+
+    <div id="content" class="col-xs-12 col-sm-8 pull-right">
+          <h2 id="signal">Signal in demographic traits</h2>
+<p>Let’s estimate signal in some demographic traits.</p>
+<p>I will illustrate how to do this using mammals.</p>
+<p>Import the mammal tree. The mammalian supertree is in a Nexus file. It will be loaded as a <code>multiPhylo</code> object with 3 trees (<code>bestDates</code>, <code>lowerDates</code>, <code>upperDates</code>). I will use the <code>bestDates</code> tree.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mammalTree &lt;-<span class="st"> </span><span class="kw">read.nexus</span>(<span class="st">&quot;data/mammalsupertree.nex&quot;</span>)
+mammalTree &lt;-<span class="st"> </span>mammalTree$mammalST_bestDates
+<span class="kw">summary</span>(mammalTree)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Phylogenetic tree: mammalTree </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   Number of tips: 4510 </span>
+<span class="co">#&gt;   Number of nodes: 2108 </span>
+<span class="co">#&gt;   Branch lengths:</span>
+<span class="co">#&gt;     mean: 10.18057 </span>
+<span class="co">#&gt;     variance: 77.94854 </span>
+<span class="co">#&gt;     distribution summary:</span>
+<span class="co">#&gt;    Min. 1st Qu.  Median 3rd Qu.    Max. </span>
+<span class="co">#&gt;     0.1     4.0     8.2    13.4   102.6 </span>
+<span class="co">#&gt;   No root edge.</span>
+<span class="co">#&gt;   First ten tip labels: Tachyglossus_aculeatus </span>
+<span class="co">#&gt;                         Zaglossus_bruijni</span>
+<span class="co">#&gt;                         Ornithorhynchus_anatinus</span>
+<span class="co">#&gt;                         Anomalurus_beecrofti</span>
+<span class="co">#&gt;                         Anomalurus_derbianus</span>
+<span class="co">#&gt;                         Anomalurus_pelii</span>
+<span class="co">#&gt;                         Anomalurus_pusillus</span>
+<span class="co">#&gt;                         Zenkerella_insignis</span>
+<span class="co">#&gt;                         Idiurus_macrotis</span>
+<span class="co">#&gt;                         Idiurus_zenkeri</span>
+<span class="co">#&gt;   No node labels.</span></code></pre></div>
+<p>Because the COMADRE species name contains infraspecific names for some species, I first need to create a new vector in the metadata for the latin binomial.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">comadre$metadata$binomial &lt;-<span class="st"> </span><span class="kw">paste</span>(comadre$metadata$GenusAccepted,<span class="st">&quot;_&quot;</span>,comadre$metadata$SpeciesEpithetAccepted,<span class="dt">sep=</span><span class="st">&quot;&quot;</span>)</code></pre></div>
+<p>Now I can check how many species in COMADRE are actually in the phylogeny…</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(mammalTree$tip.label %in%<span class="st"> </span>comadre$metadata$binomial)
+<span class="co">#&gt; [1] 76</span></code></pre></div>
+<p>I can also check which species are in COMADRE that are not in the phylogeny…</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">COMADREmammalSp&lt;-comadre$metadata$binomial[comadre$metadata$Class ==<span class="st">&quot;Mammalia&quot;</span>]
+<span class="kw">unique</span>(COMADREmammalSp[<span class="kw">which</span>(!COMADREmammalSp %in%<span class="st"> </span>mammalTree$tip.label)])
+<span class="co">#&gt;  [1] &quot;Antechinus_agilis&quot;           &quot;Bos_gaurus&quot;                 </span>
+<span class="co">#&gt;  [3] &quot;Brachyteles_hypoxanthus&quot;     &quot;Callospermophilus_lateralis&quot;</span>
+<span class="co">#&gt;  [5] &quot;Clethrionomys_NA&quot;            &quot;Felis_catus&quot;                </span>
+<span class="co">#&gt;  [7] &quot;Gorilla_beringei&quot;            &quot;Hystrix_refossa&quot;            </span>
+<span class="co">#&gt;  [9] &quot;Lagothrix_lagothricha&quot;       &quot;Lemmus_NA&quot;                  </span>
+<span class="co">#&gt; [11] &quot;Microtus_NA&quot;                 &quot;Papio_cynocephalus&quot;         </span>
+<span class="co">#&gt; [13] &quot;Pongo_abelii&quot;                &quot;Propithecus_edwardsi&quot;       </span>
+<span class="co">#&gt; [15] &quot;Lycalopex_culpaeus&quot;          &quot;Urocitellus_armatus&quot;        </span>
+<span class="co">#&gt; [17] &quot;Urocitellus_beldingi&quot;        &quot;Urocitellus_columbianus&quot;</span></code></pre></div>
+<p>Some of these may be synonyms and I could update the data to reflect this. Life is short though, so I’m not going to do that right now…</p>
+<p>First, let’s look at the signal for body mass.</p>
+<p>We’ll need to build a suitable data frame (this is the tricky part!) by adding weight information to the COMADRE metadata.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pantheria &lt;-<span class="st"> </span><span class="kw">read.delim</span>(<span class="st">&quot;data/PanTHERIA_1-0_WR05_Aug2008.txt&quot;</span>,<span class="dt">na.strings =</span> <span class="st">&quot;-999.00&quot;</span>)
+myData &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">binomial =</span> pantheria$MSW05_Binomial, <span class="dt">bodyMass =</span> pantheria$X5.1_AdultBodyMass_g)
+myData$binomial &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="dt">pattern =</span> <span class="st">&quot; &quot;</span>,<span class="dt">replacement =</span> <span class="st">&quot;_&quot;</span>,myData$binomial)
+<span class="co">#newmd &lt;- merge(comadre$metadata,myData,by=&quot;binomial&quot;,all.x=TRUE,sort = FALSE)</span>
+comadre$metadata$bodyMass &lt;-<span class="st"> </span>myData$bodyMass[<span class="kw">match</span>(comadre$metadata$binomial,myData$binomial)]</code></pre></div>
+<p>Now we need to subset the whole COMADRE object to only include the data in the tree, and where we have body mass information. In practice it is best to make a <code>comparative.data</code> object. This type of object combines both the data and the tree in a single object. It is best to subset the data to include only the columns you are interested in before making it.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#first make a body mass data.frame.</span>
+tempData &lt;-<span class="st"> </span><span class="kw">unique</span>(comadre$metadata[,<span class="kw">c</span>(<span class="st">&quot;binomial&quot;</span>,<span class="st">&quot;bodyMass&quot;</span>)])
+bmCompData&lt;-<span class="kw">comparative.data</span>(mammalTree,tempData,<span class="dt">names.col =</span> <span class="st">&quot;binomial&quot;</span>)</code></pre></div>
+<p>Now I can fit a PGLS to estimate signal strength.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model1&lt;-<span class="kw">pgls</span>(<span class="kw">log</span>(bodyMass)~<span class="dv">1</span>,<span class="dt">data =</span> bmCompData,<span class="dt">lambda=</span><span class="st">&quot;ML&quot;</span>)
+<span class="kw">summary</span>(model1)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; pgls(formula = log(bodyMass) ~ 1, data = bmCompData, lambda = &quot;ML&quot;)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residuals:</span>
+<span class="co">#&gt;      Min       1Q   Median       3Q      Max </span>
+<span class="co">#&gt; -0.75411 -0.15910 -0.04799  0.12623  0.53961 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Branch length transformations:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; kappa  [Fix]  : 1.000</span>
+<span class="co">#&gt; lambda [ ML]  : 0.996</span>
+<span class="co">#&gt;    lower bound : 0.000, p = &lt; 2.22e-16</span>
+<span class="co">#&gt;    upper bound : 1.000, p = 0.53644</span>
+<span class="co">#&gt;    95.0% CI   : (0.962, NA)</span>
+<span class="co">#&gt; delta  [Fix]  : 1.000</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;             Estimate Std. Error t value  Pr(&gt;|t|)    </span>
+<span class="co">#&gt; (Intercept)   9.1356     1.5850  5.7638 1.899e-07 ***</span>
+<span class="co">#&gt; ---</span>
+<span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residual standard error: 0.2667 on 72 degrees of freedom</span>
+<span class="co">#&gt; Multiple R-squared:     0,   Adjusted R-squared:     0 </span>
+<span class="co">#&gt; F-statistic:   NaN on 0 and 72 DF,  p-value: NA</span>
+<span class="kw">plot</span>(<span class="kw">pgls.profile</span>(model1))</code></pre></div>
+<p><img src="figures/unnamed-chunk-8-1.png" title="" alt="" width="384" /></p>
+<p>One can address particular matrices in COMADRE (or COMPADRE) using the indexing functionality (square brackets).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">comadre$mat[[<span class="dv">24</span>]]$matA
+<span class="co">#&gt;            A1       A2      A3</span>
+<span class="co">#&gt; [1,] 0.000000 1232.500 2805.00</span>
+<span class="co">#&gt; [2,] 0.000465    0.145    0.00</span>
+<span class="co">#&gt; [3,] 0.000000    0.145    0.33</span></code></pre></div>
+<p>Let’s take a look at the signal strength for damping ratio - the speed of convergence to the stable age distribution. There is a function for this in both the <code>popbio</code> and <code>popdemo</code> packages. I will use the <code>popbio</code> version.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">for(i in <span class="dv">1</span>:<span class="kw">nrow</span>(comadre$metadata)){
+  A &lt;-comadre$mat[[i]]$matA
+  comadre$metadata$dampingRatio[i]&lt;-<span class="kw">as.numeric</span>(<span class="kw">try</span>(<span class="kw">damping.ratio</span>(A)))
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hist</span>(<span class="kw">log</span>(comadre$metadata$dampingRatio))</code></pre></div>
+<p><img src="figures/unnamed-chunk-12-1.png" title="" alt="" width="384" /></p>
+<p>Let’s now estimate signal in the damping ratio. Where there are more than one record per species I will take the mean.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tempData &lt;-<span class="st"> </span>comadre$metadata[,<span class="kw">c</span>(<span class="st">&quot;binomial&quot;</span>,<span class="st">&quot;dampingRatio&quot;</span>)]
+x&lt;-<span class="kw">tapply</span>(tempData$dampingRatio,tempData$binomial,mean)
+tempData&lt;-<span class="kw">data.frame</span>(<span class="dt">binomial =</span> <span class="kw">names</span>(x), <span class="dt">dampingRatio=</span> <span class="kw">as.vector</span>(x))</code></pre></div>
+<p>Some of the damping ratios are calculated to be infinite. I replace these with NA.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tempData$dampingRatio[tempData$dampingRatio ==<span class="st"> </span><span class="ot">Inf</span>] &lt;-<span class="st"> </span><span class="ot">NA</span>
+drCompData&lt;-<span class="kw">comparative.data</span>(mammalTree,tempData,<span class="dt">names.col =</span> <span class="st">&quot;binomial&quot;</span>)</code></pre></div>
+<p>Now I can fit a PGLS model to estimate signal strength in damping ratio.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model1&lt;-<span class="kw">pgls</span>(<span class="kw">log</span>(dampingRatio)~<span class="dv">1</span>,<span class="dt">data =</span> drCompData,<span class="dt">lambda=</span><span class="st">&quot;ML&quot;</span>)
+<span class="kw">summary</span>(model1)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; pgls(formula = log(dampingRatio) ~ 1, data = drCompData, lambda = &quot;ML&quot;)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residuals:</span>
+<span class="co">#&gt;      Min       1Q   Median       3Q      Max </span>
+<span class="co">#&gt; -0.11936 -0.03141  0.01536  0.05115  0.14774 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Branch length transformations:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; kappa  [Fix]  : 1.000</span>
+<span class="co">#&gt; lambda [ ML]  : 0.000</span>
+<span class="co">#&gt;    lower bound : 0.000, p = 1    </span>
+<span class="co">#&gt;    upper bound : 1.000, p = 4.155e-10</span>
+<span class="co">#&gt;    95.0% CI   : (NA, 0.379)</span>
+<span class="co">#&gt; delta  [Fix]  : 1.000</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;             Estimate Std. Error t value  Pr(&gt;|t|)    </span>
+<span class="co">#&gt; (Intercept) 0.739500   0.099988  7.3959 4.069e-10 ***</span>
+<span class="co">#&gt; ---</span>
+<span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residual standard error: 0.06582 on 63 degrees of freedom</span>
+<span class="co">#&gt; Multiple R-squared:     0,   Adjusted R-squared:     0 </span>
+<span class="co">#&gt; F-statistic:   NaN on 0 and 63 DF,  p-value: NA</span></code></pre></div>
+<p>This measure has a really low signal! This means that it would be extremely difficult to infer the value based on the value of similar species.</p>
+<h2>Try the same thing for reactivity</h2>
+<p>Reactivity is the first-timestep amplification which tells how fast a population could possibly grow (see Ezard et al.).</p>
+<p>Again, I will loop through the matrices in COMADRE, then subset to the species of interest…</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">for(i in <span class="dv">1</span>:<span class="kw">nrow</span>(comadre$metadata)){
+  A &lt;-comadre$mat[[i]]$matA
+  comadre$metadata$react[i]&lt;-<span class="kw">as.numeric</span>(<span class="kw">try</span>(<span class="kw">reactivity</span>(A)))
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hist</span>(<span class="kw">log</span>(comadre$metadata$react))</code></pre></div>
+<p><img src="figures/unnamed-chunk-18-1.png" title="" alt="" width="384" /></p>
+<p>Now I can estimate signal in reactivity. As before, where there is more than one record per species I will take the mean.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tempData &lt;-<span class="st"> </span>comadre$metadata[,<span class="kw">c</span>(<span class="st">&quot;binomial&quot;</span>,<span class="st">&quot;react&quot;</span>)]
+x&lt;-<span class="kw">tapply</span>(tempData$react,tempData$binomial,mean)
+tempData&lt;-<span class="kw">data.frame</span>(<span class="dt">binomial =</span> <span class="kw">names</span>(x), <span class="dt">react=</span> <span class="kw">as.vector</span>(x))
+
+reactCompData&lt;-<span class="kw">comparative.data</span>(mammalTree,tempData,<span class="dt">names.col =</span> <span class="st">&quot;binomial&quot;</span>)</code></pre></div>
+<p>Now I can fit a PGLS model to estimate signal strength in reactivity I can also look at the likelihood surface for the lambda (signal) estimate.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model1&lt;-<span class="kw">pgls</span>(<span class="kw">log</span>(react)~<span class="dv">1</span>,<span class="dt">data =</span> reactCompData,<span class="dt">lambda=</span><span class="st">&quot;ML&quot;</span>)
+<span class="kw">summary</span>(model1)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; pgls(formula = log(react) ~ 1, data = reactCompData, lambda = &quot;ML&quot;)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residuals:</span>
+<span class="co">#&gt;       Min        1Q    Median        3Q       Max </span>
+<span class="co">#&gt; -0.304321 -0.021488  0.008407  0.049554  0.305453 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Branch length transformations:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; kappa  [Fix]  : 1.000</span>
+<span class="co">#&gt; lambda [ ML]  : 0.000</span>
+<span class="co">#&gt;    lower bound : 0.000, p = 1    </span>
+<span class="co">#&gt;    upper bound : 1.000, p = 1.2362e-10</span>
+<span class="co">#&gt;    95.0% CI   : (NA, 0.586)</span>
+<span class="co">#&gt; delta  [Fix]  : 1.000</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;             Estimate Std. Error t value  Pr(&gt;|t|)    </span>
+<span class="co">#&gt; (Intercept)  0.63559    0.13777  4.6136 1.875e-05 ***</span>
+<span class="co">#&gt; ---</span>
+<span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residual standard error: 0.09279 on 66 degrees of freedom</span>
+<span class="co">#&gt; Multiple R-squared:     0,   Adjusted R-squared:     0 </span>
+<span class="co">#&gt; F-statistic:   NaN on 0 and 66 DF,  p-value: NA</span>
+<span class="kw">plot</span>(<span class="kw">pgls.profile</span>(model1))</code></pre></div>
+<p><img src="figures/unnamed-chunk-20-1.png" title="" alt="" width="384" /></p>
+<p>This measure also has a really low signal!</p>
+<p>The question is, are there demographic traits with high signal? Can signal be useful?</p>
+
+        </div>
+      </div>
+
+      <div class="footer">
+        <hr>
+        <p>Based on Hadley Wickham's Advanced R Programming site. Powered by <a href="http://jekyllrb.com/">jekyll</a>,
+          <a href="http://yihui.name/knitr/">knitr</a>, and
+          <a href="http://johnmacfarlane.net/pandoc/">pandoc</a>. Source
+          available on <a href="https://github.com/jonesor/ceed/">github</a>.
+        </p>
+      </div>
+
+    </div> <!-- /container -->
+
+  <script src="//code.jquery.com/jquery.js"></script>
+  <script src="www/bootstrap.min.js"></script>
+  <script src="www/toc.js"></script>
+
+  </body>
+</html>

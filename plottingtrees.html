@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="generator" content="pandoc" />
+
+<title>Plotting trees</title>
+
+<script src="www/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="www/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
+<script src="www/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="www/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="www/bootstrap-3.3.1/shim/respond.min.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+
+</head>
+
+<body>
+
+<div class="container">
+
+
+
+<h2 id="basics">Basic plots</h2>
+<p>The basic tree plotting command is simply <code>plot()</code>. However, there is potentially much more to it than that. For example, you might want to highlight particular clades, or point out particular branching points, etc. We’ll use the cat tree that we have already produced.</p>
+<p>For example, we could use <code>which.edge</code> function to identify the ancestral edges leading to members of a particular clade. Then we can use this information to plot a cladogram (see figure) with the edges coloured to highlight a particular clade, in this case <em>Panthera</em>. We can also easily add a scale bar using the <code>add.scale.bar</code> function, or highlight a clade with the <code>rect</code> function. We could also use <code>mrca</code> and <code>nodelabels</code> to highlight the the most recent common ancestor of the lion and the domesticated cat.</p>
+<pre class="sourceCode r"><code class="sourceCode r">wh &lt;-<span class="st"> </span><span class="kw">which.edge</span>(CatTree,<span class="dv">1</span>:<span class="dv">4</span>)
+colo &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="st">&quot;black&quot;</span>, <span class="kw">dim</span>(CatTree$edge)[<span class="dv">1</span>])
+colo[wh]&lt;-<span class="st"> &quot;grey&quot;</span>
+<span class="kw">plot</span>(CatTree, <span class="dt">font =</span> <span class="dv">1</span>, <span class="dt">edge.color =</span> colo, <span class="dt">edge.width =</span> <span class="dv">3</span>, <span class="dt">no.margin =</span> <span class="ot">TRUE</span>)
+<span class="kw">add.scale.bar</span>(<span class="dt">length=</span><span class="dv">5</span>)
+<span class="kw">rect</span>(<span class="fl">8.5</span>, <span class="fl">7.5</span>,  <span class="dv">25</span>, <span class="fl">11.5</span>, <span class="dt">col=</span><span class="st">&quot;red&quot;</span>, <span class="dt">density=</span><span class="dv">0</span>, <span class="dt">lwd=</span><span class="dv">2</span>)
+
+x &lt;-<span class="st"> </span><span class="kw">mrca</span>(CatTree)[<span class="st">&quot;Felis_silvestris&quot;</span>, <span class="st">&quot;Panthera_leo&quot;</span>]
+<span class="kw">nodelabels</span>(<span class="dt">text=</span><span class="ot">NULL</span>,<span class="dt">pch=</span><span class="dv">16</span>, <span class="dt">node=</span>x,<span class="dt">col=</span><span class="st">&quot;red&quot;</span>)</code></pre>
+<p><img src="figures/unnamed-chunk-2-1.png" title="" alt="" width="384" /></p>
+<p><em>Note:</em> a <em>cladogram</em> is different from a <em>phylogram</em> (the default form taken when plotting a phylo object) in that it ignores branch lengths and represents the topology of the tree with arbitrary branch lengths.</p>
+<h2 id="othertypes">Different forms of tree plots</h2>
+<p>You can ask R to draw the trees in any direction, with the <code>direction</code> argument in the <code>plot</code> function. For example, <code>direction=&quot;downwards&quot;</code>, <code>direction=&quot;upwards&quot;</code> etc. In addition, the <code>plot</code> function can plot a number of other tree types including cladogram, fan-shaped trees, and radial trees (using the arguments, <code>type=&quot;cladogram&quot;</code>, <code>type=&quot;fan&quot;</code>, or <code>type=&quot;radial&quot;</code> respectively (See figure below).</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>, <span class="dv">1</span>) +<span class="st"> </span><span class="fl">0.1</span>)
+<span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))
+<span class="kw">plot</span>(CatTree,<span class="dt">type=</span><span class="st">&quot;c&quot;</span>,<span class="dt">lwd=</span><span class="dv">1</span>,<span class="dt">xpd=</span><span class="ot">NA</span>)
+<span class="kw">title</span>(<span class="dt">main=</span><span class="st">&quot;Cladogram&quot;</span>)
+
+<span class="kw">plot</span>(CatTree,<span class="dt">type=</span><span class="st">&quot;fan&quot;</span>,<span class="dt">lwd=</span><span class="dv">1</span>,<span class="dt">xpd=</span><span class="ot">NA</span>)
+<span class="kw">title</span>(<span class="dt">main=</span><span class="st">&quot;Fan&quot;</span>)
+
+<span class="kw">plot</span>(CatTree,<span class="dt">type=</span><span class="st">&quot;radial&quot;</span>,<span class="dt">lwd=</span><span class="dv">1</span>,<span class="dt">xpd=</span><span class="ot">NA</span>)
+<span class="kw">title</span>(<span class="dt">main=</span><span class="st">&quot;Radial&quot;</span>)</code></pre>
+<p><img src="figures/unnamed-chunk-3-1.png" title="" alt="" width="384" /></p>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!---
+1. Use standard R Markdown.
+2. Headings with "##" will be automatically turned into table of contents. Therefore, for longer tutorials please use this facility.
+3. Check that R studio will knit into an HTML document.
+4. You can contribute the .rmd file via GitHub (https://github.com/jonesor/learn-basta), **to the master branch ONLY**. To do that you must be a collaborator on the repository (contact me with your username), or you can fork the repository and send a pull request (https://help.github.com/articles/using-pull-requests/).
+5. Alternatively you can email me the *rmd file and associated files (e.g. any figures/diagrams.)
+6. I will then compile the site on my computer and push it to the gh-pages branch (which is where the website lives). You could also do this, but you will need to have Jekyll and pandoc installed.
+-->
+```{r, echo=FALSE, eval=TRUE,results='hide',include=FALSE}
+library(ape)
+library(caper)
+```
+
+## Exercises
+
+* Write out the Newick format code for the four trees in the following figure.
+
+```{r, echo=FALSE}
+par(mfrow=c(2,2))
+plot(read.tree(text="((A,B),C);"))
+title("a")
+plot(read.tree(text="(A,(B,C));"))
+title("b")
+plot(read.tree(text="((A,B),((C,D),E));"))
+title("c")
+plot(read.tree(text="(((A,B,C),D),E);"))
+title("d")
+```
+
+* Try to put the Newick trees into a text document, import them into R, and replicate the plots above.
+
+* Look at the simulations of trait evolution in the figure below. What model of evolution (Brownian, Early Burst or Ornstein-Uhlenbeck) fits them best in a, b and c?
+
+```{r, echo = FALSE}
+
+par(mfrow=c(1,3))
+nsim=30
+time.steps = 40
+
+#Brownian Motion (BM)
+bm<-matrix(ncol=nsim,nrow=time.steps)
+bm[1,]<-0
+
+for(i in 2:time.steps){
+    bm[i,] = bm[(i-1),] + rnorm(nsim,mean=0,sd=1)    
+    }
+    
+#Early-Burst (aka ACDC)
+eb<-matrix(ncol=nsim,nrow=time.steps)
+eb[1,]<-0
+
+r=-.1
+
+for(i in 2:time.steps){
+    eb[i,] = eb[(i-1),] +  (exp(r*i)*  rnorm(nsim,mean=0,sd=1))
+    }
+
+#Ornstein-Uhlenbeck (OU)
+ou<-matrix(ncol=nsim,nrow=time.steps)
+ou[1,]<-0
+
+alpha=-0.1
+
+for(i in 2:time.steps){
+    ou[i,] = ou[i-1,] + alpha*(ou[i-1,]) + rnorm(nsim,mean=0,sd=1) 
+    }
+
+plot(1:time.steps,bm[,1],xlim=c(0,time.steps),ylim=c(-max(abs(bm)),max(abs(bm))),type="n",xlab="Time",ylab="Trait value",bty="n")
+title("a")
+matlines(1:time.steps,ou,lty=1,col="#000000", lwd=1)
+
+plot(1:time.steps,bm[,1],xlim=c(0,time.steps),ylim=c(-max(abs(bm)),max(abs(bm))),type="n",xlab="Time",ylab="Trait value",bty="n")
+title("b")
+
+matlines(1:time.steps,bm,lty=1,col="#000000", lwd=1)
+
+
+plot(1:time.steps,bm[,1],xlim=c(0,time.steps),ylim=c(-max(abs(bm)),max(abs(bm))),type="n",xlab="Time",ylab="Trait value",bty="n")
+title("c")
+matlines(1:time.steps,eb,lty=1,col="#000000", lwd=1)
+```
+
+* Import the cat tree and produce a PDF plot that highlights a particular clade (either with a box, or by colouring the branches).
+
+* In the cat tree, which node represents the most recent common ancestor of the lion (*Panthera leo*) and the domesticated cat (*Felis silvestris*). How old is this ancestor?
+
+* What is the evolutionary distance between *Lynx rufus* and *Puma concolor*?
+
+* Produce a second plot of *just* the clade you selected in the previous question.
+
+* Save out your clade-specific subtree in Newick format, and as a Nexus file. Check that you can read them into R.
+
+* Estimate the phylogenetic signal for a simple regression in a tree using Blomberg's K. You will need to read both the data and the tree into R. If you don't have your own data, some sample datasets are included in the R packages `caper` and `geiger` - pick one that sounds interesting.
+
+* Using the same data, estimate signal using Pagel's $\lambda$.
+
+* Estimate the 95% CI for this $\lambda$ parameter estimate, and plot the likelihood surface.
+
+* Fit an independent contrasts model for a pair of traits with the tree. 
+
+* Fit a PGLS model that optimises $\lambda$ for the traits. Do other branch length transformations ($\delta$ and $\kappa$) have much of an effect? 
+
+* Verify that the PGLS with a $\lambda$ parameter of 1 produces an equivalent result to the independent contrast model, and that a model with a $\lambda$ parameter of 0 produces the same result as OLS regression.
+
+* Calculate ED scores for the species in the cat tree.
+
+* How much is phylogenetic diversity reduced with the extinction of the snow leopard (*Uncia uncia*)?
+
+
+
+

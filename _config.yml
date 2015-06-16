@@ -1,6 +1,0 @@
-name: CEED Workshop
-markdown: redcarpet
-highlighter: pygments
-baseurl: "/ceed-workshop"
-
-exclude: ["pandoc", "book", "extras"]

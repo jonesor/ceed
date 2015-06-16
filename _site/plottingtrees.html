@@ -1,64 +1,97 @@
 <!DOCTYPE html>
+<html>
+  <head>
+    <title>Plotting trees &middot; CEED Workshop</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+    <link href="www/bootstrap.min.css" rel="stylesheet">
+    <link href="www/highlight.css" rel="stylesheet">
+    <link href="www/extras.css" rel="stylesheet">
 
-<head>
+    <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700'
+      rel='stylesheet' type='text/css'>
+  </head>
 
-<meta charset="utf-8">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
-<meta name="generator" content="pandoc" />
+  <body>
 
-<title>Plotting trees</title>
-
-<script src="www/jquery-1.11.0/jquery.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="www/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
-<script src="www/bootstrap-3.3.1/js/bootstrap.min.js"></script>
-<script src="www/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
-<script src="www/bootstrap-3.3.1/shim/respond.min.js"></script>
-
-
-<style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; }
-code > span.dt { color: #902000; }
-code > span.dv { color: #40a070; }
-code > span.bn { color: #40a070; }
-code > span.fl { color: #40a070; }
-code > span.ch { color: #4070a0; }
-code > span.st { color: #4070a0; }
-code > span.co { color: #60a0b0; font-style: italic; }
-code > span.ot { color: #007020; }
-code > span.al { color: #ff0000; font-weight: bold; }
-code > span.fu { color: #06287e; }
-code > span.er { color: #ff0000; font-weight: bold; }
+<style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
 </style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
 
 
-</head>
-
-<body>
-
-<div class="container">
 
 
+    <div class="container">
 
-<h2 id="basics">Basic plots</h2>
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Table of contents<b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu pull-right" role="menu">
+              <li><a href="Introduction.html">Introduction</a></li>
+
+<li class="dropdown-header">Basics</li>
+<li><a href="readingdata.html">Reading data</a></li>
+<li><a href="manipulatingtrees.html">Manipulating Trees</a></li>
+<li><a href="plottingtrees.html">Plotting Trees</a></li>
+<li><a href="phylogeneticsignal.html">Phylogenetic Signal</a></li>
+
+
+<li class="dropdown-header">Exercises</li>
+<li><a href="exercises.html">Exercises</a></li>
+<li><a href="signal.html">Signal in Demographic Traits</a></li>
+
+<li class="dropdown-header">More</li>
+<li><a href="usefulfunctionsanddata.html">Useful stuff</a></li>
+
+            </ul>
+          </li>
+        </ul>
+
+        <h3 class="muted"><a href="/ceed-workshop/">CEED Workshop Material</a> <small>by Owen Jones</small></h3>
+        <hr>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12 col-sm-3" id="nav">
+        <div class="well">
+         ...
+        </div>
+
+
+        <h4>Page contents</h4>
+          <ul class="list-unstyled" id="toc"></ul>
+
+          <hr>
+
+
+
+        </div>
+
+    <div id="content" class="col-xs-12 col-sm-8 pull-right">
+          <h2 id="basics">Basic plots</h2>
 <p>The basic tree plotting command is simply <code>plot()</code>. However, there is potentially much more to it than that. For example, you might want to highlight particular clades, or point out particular branching points, etc. We’ll use the cat tree that we have already produced.</p>
 <p>For example, we could use <code>which.edge</code> function to identify the ancestral edges leading to members of a particular clade. Then we can use this information to plot a cladogram (see figure) with the edges coloured to highlight a particular clade, in this case <em>Panthera</em>. We can also easily add a scale bar using the <code>add.scale.bar</code> function, or highlight a clade with the <code>rect</code> function. We could also use <code>mrca</code> and <code>nodelabels</code> to highlight the the most recent common ancestor of the lion and the domesticated cat.</p>
-<pre class="sourceCode r"><code class="sourceCode r">wh &lt;-<span class="st"> </span><span class="kw">which.edge</span>(CatTree,<span class="dv">1</span>:<span class="dv">4</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wh &lt;-<span class="st"> </span><span class="kw">which.edge</span>(CatTree,<span class="dv">1</span>:<span class="dv">4</span>)
 colo &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="st">&quot;black&quot;</span>, <span class="kw">dim</span>(CatTree$edge)[<span class="dv">1</span>])
 colo[wh]&lt;-<span class="st"> &quot;grey&quot;</span>
 <span class="kw">plot</span>(CatTree, <span class="dt">font =</span> <span class="dv">1</span>, <span class="dt">edge.color =</span> colo, <span class="dt">edge.width =</span> <span class="dv">3</span>, <span class="dt">no.margin =</span> <span class="ot">TRUE</span>)
@@ -66,12 +99,12 @@ colo[wh]&lt;-<span class="st"> &quot;grey&quot;</span>
 <span class="kw">rect</span>(<span class="fl">8.5</span>, <span class="fl">7.5</span>,  <span class="dv">25</span>, <span class="fl">11.5</span>, <span class="dt">col=</span><span class="st">&quot;red&quot;</span>, <span class="dt">density=</span><span class="dv">0</span>, <span class="dt">lwd=</span><span class="dv">2</span>)
 
 x &lt;-<span class="st"> </span><span class="kw">mrca</span>(CatTree)[<span class="st">&quot;Felis_silvestris&quot;</span>, <span class="st">&quot;Panthera_leo&quot;</span>]
-<span class="kw">nodelabels</span>(<span class="dt">text=</span><span class="ot">NULL</span>,<span class="dt">pch=</span><span class="dv">16</span>, <span class="dt">node=</span>x,<span class="dt">col=</span><span class="st">&quot;red&quot;</span>)</code></pre>
+<span class="kw">nodelabels</span>(<span class="dt">text=</span><span class="ot">NULL</span>,<span class="dt">pch=</span><span class="dv">16</span>, <span class="dt">node=</span>x,<span class="dt">col=</span><span class="st">&quot;red&quot;</span>)</code></pre></div>
 <p><img src="figures/unnamed-chunk-2-1.png" title="" alt="" width="384" /></p>
 <p><em>Note:</em> a <em>cladogram</em> is different from a <em>phylogram</em> (the default form taken when plotting a phylo object) in that it ignores branch lengths and represents the topology of the tree with arbitrary branch lengths.</p>
 <h2 id="othertypes">Different forms of tree plots</h2>
 <p>You can ask R to draw the trees in any direction, with the <code>direction</code> argument in the <code>plot</code> function. For example, <code>direction=&quot;downwards&quot;</code>, <code>direction=&quot;upwards&quot;</code> etc. In addition, the <code>plot</code> function can plot a number of other tree types including cladogram, fan-shaped trees, and radial trees (using the arguments, <code>type=&quot;cladogram&quot;</code>, <code>type=&quot;fan&quot;</code>, or <code>type=&quot;radial&quot;</code> respectively (See figure below).</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>, <span class="dv">1</span>) +<span class="st"> </span><span class="fl">0.1</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>, <span class="dv">1</span>) +<span class="st"> </span><span class="fl">0.1</span>)
 <span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))
 <span class="kw">plot</span>(CatTree,<span class="dt">type=</span><span class="st">&quot;c&quot;</span>,<span class="dt">lwd=</span><span class="dv">1</span>,<span class="dt">xpd=</span><span class="ot">NA</span>)
 <span class="kw">title</span>(<span class="dt">main=</span><span class="st">&quot;Cladogram&quot;</span>)
@@ -80,21 +113,26 @@ x &lt;-<span class="st"> </span><span class="kw">mrca</span>(CatTree)[<span clas
 <span class="kw">title</span>(<span class="dt">main=</span><span class="st">&quot;Fan&quot;</span>)
 
 <span class="kw">plot</span>(CatTree,<span class="dt">type=</span><span class="st">&quot;radial&quot;</span>,<span class="dt">lwd=</span><span class="dv">1</span>,<span class="dt">xpd=</span><span class="ot">NA</span>)
-<span class="kw">title</span>(<span class="dt">main=</span><span class="st">&quot;Radial&quot;</span>)</code></pre>
+<span class="kw">title</span>(<span class="dt">main=</span><span class="st">&quot;Radial&quot;</span>)</code></pre></div>
 <p><img src="figures/unnamed-chunk-3-1.png" title="" alt="" width="384" /></p>
 
+        </div>
+      </div>
 
-</div>
+      <div class="footer">
+        <hr>
+        <p>Based on Hadley Wickham's Advanced R Programming site. Powered by <a href="http://jekyllrb.com/">jekyll</a>,
+          <a href="http://yihui.name/knitr/">knitr</a>, and
+          <a href="http://johnmacfarlane.net/pandoc/">pandoc</a>. Source
+          available on <a href="https://github.com/jonesor/ceed/">github</a>.
+        </p>
+      </div>
 
-<script>
+    </div> <!-- /container -->
 
-// add bootstrap table styles to pandoc tables
-$(document).ready(function () {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
-});
+  <script src="//code.jquery.com/jquery.js"></script>
+  <script src="www/bootstrap.min.js"></script>
+  <script src="www/toc.js"></script>
 
-</script>
-
-
-</body>
+  </body>
 </html>

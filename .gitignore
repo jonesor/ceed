@@ -4,8 +4,6 @@
 
 # Example code in package build process
 *-Ex.R
-temp.rmd
-temp.html
 
 # RStudio files
 .Rproj.user/
@@ -19,6 +17,6 @@ vignettes/*.pdf
 anage_data.txt
 COMADRE_v.1.0.0.RData
 COMPADRE_Nov_12_2014_Version_3.1.RData
+E090-184-metadata
 PanTHERIA_1-0_WR05_Aug2008.txt
 mammalsupertree.nex
-E090-184-metadata.html

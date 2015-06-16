@@ -6,33 +6,20 @@
 5. Alternatively you can email me the *rmd file and associated files (e.g. any figures/diagrams.)
 6. I will then compile the site on my computer and push it to the gh-pages branch (which is where the website lives). You could also do this, but you will need to have Jekyll and pandoc installed.
 -->
-<h2 id="useful-functions">Other useful functions</h2>
-<h3>In caper</h3>
-<p><code>clade.members</code> - identify the members of a clade descending from a node.</p>
-<p><code>growTree</code> - simulate a tree with traits.</p>
-<h3>In ape</h3>
-<p><code>is.ultrametric</code> - tests whether a tree is ultrametric.</p>
-<p><code>axisPhylo</code> - adds a scale axis to a phylo plot.</p>
-<p><code>bind.tree</code> - binds two phylogenetic trees together into a single phylo object.</p>
-<p><code>branching.times</code> - gets the branching times for a phylogenetic tree.</p>
-<p><code>extract.clade</code> - extracts a clade from a tree.</p>
-<p><code>is.binary.tree</code> - tests whether the tree is binary.</p>
-<p><code>is.rooted</code> - tests whether the tree is rooted</p>
-<p><code>is.monophyletic</code> - tests whether the clade is monophyletic</p>
-<p><code>ltt.plot</code> - produces a lineages through time plot.</p>
-<p><code>mantel.test</code> - tests similarity of two matrices.</p>
-<p><code>root</code> - roots a phylogenetic tree.</p>
-<p><code>rotate</code> - swap sister clades.</p>
-<p><code>rtree</code> - generate random trees.</p>
-<p><code>rcoal</code> - generate random trees.</p>
-<p><code>vcv.phylo</code> - obtains the variance-covariance matrix of the tree.</p>
-<h2 id="datasets">Sample datasets</h2>
-<p>The phylogenetic packages in R come with some data that would be ideal for testing out some of these methods. I encourage you to explore them and practice some of the analyses that we’ve covered above.</p>
-<h3>In caper</h3>
-<p><code>IsaacEtAl</code> - The datafile contains species level phylogenies and accompanying data frames of nine variables for each of four mammalian orders (Primates, Carnivora, Chiroptera and Marsupialia).</p>
-<p><code>perissodactyla</code> - This is a comparative dataset on Perissodactyla taken from the examples include with the original CAIC program.</p>
-<p><code>shorebird</code> - This is a comparative dataset on the evolution of shorebird egg size taken from Lislevand and Thomas (2006).</p>
-<p><code>syrphidae</code> - A genus level phylogeny of the Syrphidae (sawflies) along with data on the species richness of each genus.</p>
-<p><code>BritishBirds</code> - The dataset contains a molecular phylogeny of 249 species of British birds and a data frame containing information on the conservation status of 181 of those species. The dataset is taken from Thomas (2008)</p>
-<h3>In geiger</h3>
-<p><code>geospiza</code> - Phylogenetic tree and morphological data for Darwin’s finches.</p>
+<h2 id="phylogeny">What is a phylogeny?</h2>
+<p>All organisms descend from a common ancestor. Therefore, their relationships can be represented hierarchically in the form of a tree. A phylogeny is simply the representation of evolutionary relationships between species (or higher taxonomic groups) in the form of this tree structure (Figure below).</p>
+<p>Phylogenetic trees have two types of <em>nodes</em>; internal nodes, which represent speciation events, and terminal nodes, which represent the species themselves. Terminal nodes are also commonly referred to as <em>tips</em>. Nodes are joined together by <em>edges</em>, whose length can be arbitrary or can represent time (e.g. millions of years). The term <em>branch</em> is normally used for the tree edge and the descendent subtree, while the term subtree refers to the internal node and its descendents together.</p>
+<p>Ideally phylogenies will be strictly <em>dichotomous</em> (i.e. each internal node represents a splitting into two <em>clades</em>), however, when the tree is poorly resolved, there may be more than one branch emerging from a single speciation event (this is called a <em>polytomy</em>). Often, the analytical methods used require a strictly dichotomous tree, so the polytomies must be resolved to be dichotomies (this is usually done randomly, and there is an R function to do it).</p>
+<p>The phylogeny is typically constructed using genetic data (e.g., from sequence data), or with morphological data, or a combination of both. Node ages are often deduced using a molecular clock method, which may be calibrated using fossil data. Sometimes the topology of the tree can be altered or constrained with ``expert opinion’’. It is not uncommon to find several plausible trees for the same groups of species and, in the case of Bayesian tree construction methods, there may be many dozens of equally plausible posterior trees. These approaches are outside the scope of this workshop, but suffice to say, the phylogeny is itself a model, and, like any model, is almost certainly incorrect!</p>
+<p><img src="figures/unnamed-chunk-2-1.png" title="" alt="" width="384" /></p>
+<p>So, in the following phylogeny you can see that A and B are more closely related to eachother than A is to C.</p>
+<p><img src="figures/unnamed-chunk-3-1.png" title="" alt="" width="384" /></p>
+<h2 id="trait-evolution">How do continuous traits evolve?</h2>
+<p>Evolutionary biologists have produced a number of models that characterise the evolution of traits through time (see the figure below). For the time being we will focus solely on continuous traits such as body mass or skeletal size etc. The most important models are probably the following three:</p>
+<p><strong>Brownian motion (BM):</strong> The BM model is the simplest. This model assumes that, through time, traits evolve via a random walk process. In this model there is no optimum value for the trait, and there are no processes (e.g. selection) that influence the trait value. Variation is unbounded and accumulates linearly as a function of time, and the expected difference in trait value (i.e. the mean value) is zero.</p>
+<p><strong>Ornstein-Uhlenbeck (OU):</strong> The OU model is derived from the Brownian motion model, but has an additional “constraint parameter” (<br /><span class="math display"><em>α</em></span><br />), which pulls the trait value towards the long term mean. This mean can be conceptualised as the optimum value for a particular trait. The result of this model is a much more bounded set of trait values, but again, the mean trait value is zero. When <span class="math inline"><em>α</em></span> is 0, the model is equivalent to the BM model. Strong OU signal could be indicative of stabilising selection.</p>
+<p><strong>Early Burst (EB):</strong> The EB model is also derived from the Brownian motion model, and is sometimes termed the ACDC model (short for Accelerating/Decelerating). Like the OU model, this model includes an extra parameter (<code>r</code>) which describes how the rate of evolution changes exponentially through time. The result is that, when <code>r</code> is negative, the evolution of a continuous trait takes place rapidly at first, and decelerates with time (conversely, when <code>r</code> is positive, rates accelerate). When <code>r</code> is 0, the model is equivalent to the BM model. This model, when <code>r</code> is negative, would be like an adaptive radiation into a fixed number of niches.</p>
+<p>When conducting phylogenetic analyses, it is a good idea to bear in mind that you are assuming a model of trait evolution, and that your assumptions may not be incorrect. Furthermore, an often overlooked point, is that phylogenetic signal will arise even with a stochastic model (e.g. Brownian motion model), and some mode of evolution can act to obscure signal.</p>
+<p><img src="figures/unnamed-chunk-4-1.png" title="" alt="" width="384" /></p>
+<p><em>This plot shows simulations of continuous trait evolution under Brownian motion (BM) (grey), Ornstein-Uhlenbeck (OU) (red), and Early Burst (EB) (blue) models. The OU <code>\alpha</code> value is set to -0.1, and the EB <code>r</code> value is set to -0.2 while the mean and standard deviation for all three models were set to 0 and 1 respectively. There are 50 simulations per model.</em></p>
+<p>From these simple models it should become apparent to you that the reason that closely related species tend to have mode similar trait values than distantly related species is because there has not been much time for divergence to occur since speciation. However, after some more thought it should also become apparent that the similarity of the traits could depend on the mode of evolution. For example, under the OU model, the effect of branch length on variance dies out after a short time, and so the traits can be quite similar to each other, even after a long divergence time.</p>

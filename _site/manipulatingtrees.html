@@ -1,122 +1,89 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Manuipulating trees &middot; CEED Workshop</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="www/bootstrap.min.css" rel="stylesheet">
-    <link href="www/highlight.css" rel="stylesheet">
-    <link href="www/extras.css" rel="stylesheet">
+<html xmlns="http://www.w3.org/1999/xhtml">
 
-    <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700'
-      rel='stylesheet' type='text/css'>
-  </head>
+<head>
 
-  <body>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="generator" content="pandoc" />
 
-<style TYPE="text/css">
-code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+<title>Manuipulating trees</title>
+
+<script src="www/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="www/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
+<script src="www/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="www/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="www/bootstrap-3.3.1/shim/respond.min.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
 </style>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-    tex2jax: {
-        inlineMath: [['$','$'], ['\\(','\\)']],
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
-    }
-});
-MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i = 0; i < all.length; i += 1) {
-        all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-});
-</script>
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
 
 
 
+</head>
 
+<body>
 
-    <div class="container">
-
-      <div class="masthead">
-        <ul class="nav nav-pills pull-right">
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              Table of contents<b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu pull-right" role="menu">
-              <li><a href="Introduction.html">Introduction</a></li>
-
-<li class="dropdown-header">Basics</li>
-<li><a href="readingdata.html">Reading data</a></li>
-<li><a href="manipulatingtrees.html">Manipulating Trees</a></li>
-<li><a href="plottingtrees.html">Plotting Trees</a></li>
-<li><a href="phylogeneticsignal.html">Phylogenetic Signal</a></li>
-
-
-<li class="dropdown-header">Exercises</li>
-<li><a href="exercises.html">Exercises</a></li>
-<li><a href="signal.html">Signal in Demographic Traits</a></li>
-
-<li class="dropdown-header">More</li>
-<li><a href="usefulfunctionsanddata.html">Useful stuff</a></li>
-
-            </ul>
-          </li>
-        </ul>
-
-        <h3 class="muted"><a href="/ceed-workshop/">CEED Workshop Material</a> <small>by Owen Jones</small></h3>
-        <hr>
-      </div>
-
-      <div class="row">
-        <div class="col-xs-12 col-sm-3" id="nav">
-        <div class="well">
-         ...
-        </div>
-
-
-        <h4>Page contents</h4>
-          <ul class="list-unstyled" id="toc"></ul>
-
-          <hr>
+<div class="container">
 
 
 
-        </div>
-
-    <div id="content" class="col-xs-12 col-sm-8 pull-right">
-          <h2 id="manipulating-trees">Manipulating a phylogenetic tree in R</h2>
+<h2 id="manipulating-trees">Manipulating a phylogenetic tree in R</h2>
 <p>Once you have your tree represented as a <code>phylo</code> object in R you will probably need to manipulate it in some way before it can be plotted or anaylsed. In this section, we’ll learn how to do some basic manipulations on the tree.</p>
 <h2 id="pruning">Removing taxa (pruning the tree)</h2>
 <p>Taxa can be removed from the tree using <code>drop.tip</code>. For example, compare the two trees below:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">write.tree</span>(mytree)
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">write.tree</span>(mytree)
 <span class="co">#&gt; [1] &quot;(((A,B),C),D);&quot;</span>
 tree2&lt;-<span class="kw">drop.tip</span>(mytree,<span class="st">&quot;C&quot;</span>)
 <span class="kw">write.tree</span>(tree2)
-<span class="co">#&gt; [1] &quot;((A,B),D);&quot;</span></code></pre></div>
+<span class="co">#&gt; [1] &quot;((A,B),D);&quot;</span></code></pre>
 <p>You should see that <code>tree2a</code> has had the taxon called “C” removed, and that the branch lengths have been updated to reflect this.</p>
 <p>Groups of taxa can be removed simply by providing their names in a vector like this:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tree2a&lt;-<span class="kw">drop.tip</span>(tree2,<span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;C&quot;</span>))
+<pre class="sourceCode r"><code class="sourceCode r">tree2a&lt;-<span class="kw">drop.tip</span>(tree2,<span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;C&quot;</span>))
 <span class="kw">write.tree</span>(tree2a)
-<span class="co">#&gt; [1] &quot;(B,D);&quot;</span></code></pre></div>
+<span class="co">#&gt; [1] &quot;(B,D);&quot;</span></code></pre>
 <h2 id="extract-clade">Extracting a particular clade</h2>
 <p>Lets have a look at the carnivore tree (<code>CarnTree</code>).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CarnTree &lt;-<span class="st"> </span><span class="kw">read.tree</span>(<span class="dt">file =</span> <span class="st">&quot;data/carnivores.tre&quot;</span>)
-<span class="kw">plot</span>(CarnTree, <span class="dt">cex=</span><span class="fl">0.5</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">CarnTree &lt;-<span class="st"> </span><span class="kw">read.tree</span>(<span class="dt">file =</span> <span class="st">&quot;data/carnivores.tre&quot;</span>)
+<span class="kw">plot</span>(CarnTree, <span class="dt">cex=</span><span class="fl">0.5</span>)</code></pre>
 <p><img src="figures/unnamed-chunk-4-1.png" title="" alt="" width="384" /></p>
 <p>Imagine we are only interested in the relationships between the cats in this tree (figure below). We can subset the tree in one of two ways. The first way is to identify the relevant ancestral node on the tree, and ask which species subtend from this node.</p>
 <p>The first job in this case is to identify the relevant ancestral node. A quick and dirty method of doing this is to plot the tree and use the <code>nodelabels</code> command to see the node numbers. You could either print the tree to the screen, or you could produce a PDF and open it in <em>Preview</em> or <em>Acrobat</em> to view it. It may be necessary to use small labels (<code>...cex=0.5)</code>), and zoom in on the image.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pdf</span>(<span class="st">&quot;figures/Carnivores.pdf&quot;</span>,<span class="dt">w=</span><span class="dv">15</span>,<span class="dt">h=</span><span class="dv">15</span>)
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pdf</span>(<span class="st">&quot;Carnivores.pdf&quot;</span>,<span class="dt">w=</span><span class="dv">15</span>,<span class="dt">h=</span><span class="dv">15</span>)
 <span class="kw">plot</span>(CarnTree, <span class="dt">type=</span><span class="st">&quot;cladogram&quot;</span>, <span class="dt">cex=</span><span class="fl">0.5</span>)
 <span class="kw">nodelabels</span>(<span class="dt">cex=</span><span class="fl">0.5</span>)
 <span class="kw">dev.off</span>()
 <span class="co">#&gt; quartz_off_screen </span>
-<span class="co">#&gt;                 2</span></code></pre></div>
+<span class="co">#&gt;                 2</span></code></pre>
 <p>If you are familiar with the genera in the Carnivora, you should see that the relevant node is node number 427. Armed with this information, we can find out which species subtend from this node using the <code>clade.members</code> command, which identifies all the tips that subtend from a particular ancestral node.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">clade.members</span>(<span class="dv">427</span>,CarnTree,<span class="dt">tip.labels=</span><span class="ot">TRUE</span>)
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">clade.members</span>(<span class="dv">427</span>,CarnTree,<span class="dt">tip.labels=</span><span class="ot">TRUE</span>)
 <span class="co">#&gt;  [1] &quot;Acinonyx_jubatus&quot;         &quot;Pardofelis_marmorata&quot;    </span>
 <span class="co">#&gt;  [3] &quot;Neofelis_nebulosa&quot;        &quot;Uncia_uncia&quot;             </span>
 <span class="co">#&gt;  [5] &quot;Panthera_tigris&quot;          &quot;Panthera_onca&quot;           </span>
@@ -134,51 +101,46 @@ tree2&lt;-<span class="kw">drop.tip</span>(mytree,<span class="st">&quot;C&quot;
 <span class="co">#&gt; [29] &quot;Felis_chaus&quot;              &quot;Prionailurus_planiceps&quot;  </span>
 <span class="co">#&gt; [31] &quot;Prionailurus_rubiginosus&quot; &quot;Prionailurus_bengalensis&quot;</span>
 <span class="co">#&gt; [33] &quot;Prionailurus_viverrinus&quot;  &quot;Herpailurus_yaguarondi&quot;  </span>
-<span class="co">#&gt; [35] &quot;Puma_concolor&quot;</span></code></pre></div>
+<span class="co">#&gt; [35] &quot;Puma_concolor&quot;</span></code></pre>
 <p>We can then use this list to exclude (with the <code>drop.tip</code> function) all the tips that are <em>not</em> in the list:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">catsp &lt;-<span class="st"> </span><span class="kw">clade.members</span>(<span class="dv">427</span>,CarnTree,<span class="dt">tip.labels=</span><span class="ot">TRUE</span>)
+<pre class="sourceCode r"><code class="sourceCode r">catsp &lt;-<span class="st"> </span><span class="kw">clade.members</span>(<span class="dv">427</span>,CarnTree,<span class="dt">tip.labels=</span><span class="ot">TRUE</span>)
 dropMe &lt;-<span class="st"> </span>CarnTree$tip.label[!CarnTree$tip.label%in%catsp]
-CatTree &lt;-<span class="st"> </span><span class="kw">drop.tip</span>(CarnTree,dropMe)</code></pre></div>
+CatTree &lt;-<span class="st"> </span><span class="kw">drop.tip</span>(CarnTree,dropMe)</code></pre>
 <p>An alternative, and easier, way to do this is to use the <code>extract.clade</code> function. This only works if you are interested in <em>all</em> of the descendents from the node. If the group you are interested in is polyphyletic then you should use <code>drop.tip</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CatTree &lt;-<span class="st"> </span><span class="kw">extract.clade</span>(CarnTree,<span class="dv">427</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">CatTree &lt;-<span class="st"> </span><span class="kw">extract.clade</span>(CarnTree,<span class="dv">427</span>)</code></pre>
 <p>You should see from the figure that the most distantly related cats are the cheetah (<em>Acinonyx jubatus</em>) and the lion (<em>Panthera leo</em>). Had we known this in the first instance we could have used the <code>mrca</code> function to identify the ancestral node that represents the most recent common ancestor.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mrca</span>(CarnTree)[<span class="st">&quot;Acinonyx_jubatus&quot;</span>,<span class="st">&quot;Panthera_leo&quot;</span>]
-<span class="co">#&gt; [1] 427</span></code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mrca</span>(CarnTree)[<span class="st">&quot;Acinonyx_jubatus&quot;</span>,<span class="st">&quot;Panthera_leo&quot;</span>]
+<span class="co">#&gt; [1] 427</span></code></pre>
 <h2 id="relatedness">Relatedness between species</h2>
 <p>If we want to know the evolutionary distance between species in the tree (known as the <em>patristic distance</em>), we can use the <code>cophenetic</code> function to create a matrix of pairwise distances, from which we can select elements by tip name. For example, obtaining the distance between the fox (<em>Vulpes vulpes</em>) and the wolf (<em>Canis lupus</em>) is trivial.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">distMat&lt;-<span class="kw">cophenetic</span>(CarnTree)
+<pre class="sourceCode r"><code class="sourceCode r">distMat&lt;-<span class="kw">cophenetic</span>(CarnTree)
 distMat[<span class="st">&quot;Vulpes_vulpes&quot;</span>,<span class="st">&quot;Canis_lupus&quot;</span>]
-<span class="co">#&gt; [1] 14.8</span></code></pre></div>
+<span class="co">#&gt; [1] 14.8</span></code></pre>
 <p>We can also identify the closest relative of <em>Vulpes vulpes</em> by asking which is the minimum distance value (after exluding the self-relationship):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x&lt;-distMat[<span class="st">&quot;Vulpes_vulpes&quot;</span>,]
+<pre class="sourceCode r"><code class="sourceCode r">x&lt;-distMat[<span class="st">&quot;Vulpes_vulpes&quot;</span>,]
 x&lt;-x[<span class="kw">names</span>(x)!=<span class="st">&quot;Vulpes_vulpes&quot;</span>]
 x[<span class="kw">which.min</span>(x)]
 <span class="co">#&gt; Vulpes_rueppellii </span>
-<span class="co">#&gt;               2.2</span></code></pre></div>
+<span class="co">#&gt;               2.2</span></code></pre>
 <h2 id="saving-trees">Saving your trees</h2>
 <p>One can save the tree out as either a Newick format tree or as a Nexus file.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">write.tree</span>(CatTree,<span class="dt">file=</span><span class="st">&quot;CatTree.tre&quot;</span>)   <span class="co"># newick format</span>
-<span class="kw">write.nexus</span>(CatTree,<span class="dt">file=</span><span class="st">&quot;CatTree.nex&quot;</span>)  <span class="co"># nexus format</span></code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">write.tree</span>(CatTree,<span class="dt">file=</span><span class="st">&quot;CatTree.tre&quot;</span>)   <span class="co"># newick format</span>
+<span class="kw">write.nexus</span>(CatTree,<span class="dt">file=</span><span class="st">&quot;CatTree.nex&quot;</span>)  <span class="co"># nexus format</span></code></pre>
 <p>You can also output multiple trees in a single file. This can be very useful if, for example, you have several plausible trees. To write out several Newick format trees they must first be concatenated into a <code>multiPhylo</code> list object using <code>c.phylo()</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">write.tree</span>(<span class="kw">c.phylo</span>(CatTree,CarnTree),<span class="dt">file=</span><span class="st">&quot;MyTrees.tre&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">write.tree</span>(<span class="kw">c.phylo</span>(CatTree,CarnTree),<span class="dt">file=</span><span class="st">&quot;MyTrees.tre&quot;</span>)</code></pre>
 
-        </div>
-      </div>
 
-      <div class="footer">
-        <hr>
-        <p>Based on Hadley Wickham's Advanced R Programming site. Powered by <a href="http://jekyllrb.com/">jekyll</a>,
-          <a href="http://yihui.name/knitr/">knitr</a>, and
-          <a href="http://johnmacfarlane.net/pandoc/">pandoc</a>. Source
-          available on <a href="https://github.com/jonesor/ceed/">github</a>.
-        </p>
-      </div>
+</div>
 
-    </div> <!-- /container -->
+<script>
 
-  <script src="//code.jquery.com/jquery.js"></script>
-  <script src="www/bootstrap.min.js"></script>
-  <script src="www/toc.js"></script>
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
 
-  </body>
+</script>
+
+
+</body>
 </html>

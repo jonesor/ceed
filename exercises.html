@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Some Exercises &middot; CEED Workshop</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="www/bootstrap.min.css" rel="stylesheet">
+    <link href="www/highlight.css" rel="stylesheet">
+    <link href="www/extras.css" rel="stylesheet">
+
+    <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700'
+      rel='stylesheet' type='text/css'>
+  </head>
+
+  <body>
+
+<style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+
+    <div class="container">
+
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Table of contents<b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu pull-right" role="menu">
+              <li><a href="Introduction.html">Introduction</a></li>
+
+<li class="dropdown-header">Basics</li>
+<li><a href="readingdata.html">Reading data</a></li>
+<li><a href="manipulatingtrees.html">Manipulating Trees</a></li>
+<li><a href="plottingtrees.html">Plotting Trees</a></li>
+<li><a href="phylogeneticsignal.html">Phylogenetic Signal</a></li>
+
+
+<li class="dropdown-header">Exercises</li>
+<li><a href="exercises.html">Exercises</a></li>
+<li><a href="signal.html">Signal in Demographic Traits</a></li>
+
+<li class="dropdown-header">More</li>
+<li><a href="usefulfunctionsanddata.html">Useful stuff</a></li>
+
+            </ul>
+          </li>
+        </ul>
+
+        <h3 class="muted"><a href="/ceed-workshop/">CEED Workshop Material</a> <small>by Owen Jones</small></h3>
+        <hr>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12 col-sm-3" id="nav">
+        <div class="well">
+         ...
+        </div>
+
+
+        <h4>Page contents</h4>
+          <ul class="list-unstyled" id="toc"></ul>
+
+          <hr>
+
+
+
+        </div>
+
+    <div id="content" class="col-xs-12 col-sm-8 pull-right">
+          <!---
+1. Use standard R Markdown.
+2. Headings with "##" will be automatically turned into table of contents. Therefore, for longer tutorials please use this facility.
+3. Check that R studio will knit into an HTML document.
+4. You can contribute the .rmd file via GitHub (https://github.com/jonesor/learn-basta), **to the master branch ONLY**. To do that you must be a collaborator on the repository (contact me with your username), or you can fork the repository and send a pull request (https://help.github.com/articles/using-pull-requests/).
+5. Alternatively you can email me the *rmd file and associated files (e.g. any figures/diagrams.)
+6. I will then compile the site on my computer and push it to the gh-pages branch (which is where the website lives). You could also do this, but you will need to have Jekyll and pandoc installed.
+-->
+<h2>Exercises</h2>
+<ul>
+<li>Write out the Newick format code for the four trees in the following figure.</li>
+</ul>
+<p><img src="figures/unnamed-chunk-2-1.png" title="" alt="" width="384" /></p>
+<ul>
+<li><p>Try to put the Newick trees into a text document, import them into R, and replicate the plots above.</p></li>
+<li><p>Look at the simulations of trait evolution in the figure below. What model of evolution (Brownian, Early Burst or Ornstein-Uhlenbeck) fits them best in a, b and c?</p></li>
+</ul>
+<p><img src="figures/unnamed-chunk-3-1.png" title="" alt="" width="384" /></p>
+<ul>
+<li><p>Import the cat tree and produce a PDF plot that highlights a particular clade (either with a box, or by colouring the branches).</p></li>
+<li><p>In the cat tree, which node represents the most recent common ancestor of the lion (<em>Panthera leo</em>) and the domesticated cat (<em>Felis silvestris</em>). How old is this ancestor?</p></li>
+<li><p>What is the evolutionary distance between <em>Lynx rufus</em> and <em>Puma concolor</em>?</p></li>
+<li><p>Produce a second plot of <em>just</em> the clade you selected in the previous question.</p></li>
+<li><p>Save out your clade-specific subtree in Newick format, and as a Nexus file. Check that you can read them into R.</p></li>
+<li><p>Estimate the phylogenetic signal for a simple regression in a tree using Blomberg’s K. You will need to read both the data and the tree into R. If you don’t have your own data, some sample datasets are included in the R packages <code>caper</code> and <code>geiger</code> - pick one that sounds interesting.</p></li>
+<li><p>Using the same data, estimate signal using Pagel’s <span class="math inline"><em>λ</em></span>.</p></li>
+<li><p>Estimate the 95% CI for this <span class="math inline"><em>λ</em></span> parameter estimate, and plot the likelihood surface.</p></li>
+<li><p>Fit an independent contrasts model for a pair of traits with the tree.</p></li>
+<li><p>Fit a PGLS model that optimises <span class="math inline"><em>λ</em></span> for the traits. Do other branch length transformations (<span class="math inline"><em>δ</em></span> and <span class="math inline"><em>κ</em></span>) have much of an effect?</p></li>
+<li><p>Verify that the PGLS with a <span class="math inline"><em>λ</em></span> parameter of 1 produces an equivalent result to the independent contrast model, and that a model with a <span class="math inline"><em>λ</em></span> parameter of 0 produces the same result as OLS regression.</p></li>
+<li><p>Calculate ED scores for the species in the cat tree.</p></li>
+<li><p>How much is phylogenetic diversity reduced with the extinction of the snow leopard (<em>Uncia uncia</em>)?</p></li>
+</ul>
+
+        </div>
+      </div>
+
+      <div class="footer">
+        <hr>
+        <p>Based on Hadley Wickham's Advanced R Programming site. Powered by <a href="http://jekyllrb.com/">jekyll</a>,
+          <a href="http://yihui.name/knitr/">knitr</a>, and
+          <a href="http://johnmacfarlane.net/pandoc/">pandoc</a>. Source
+          available on <a href="https://github.com/jonesor/ceed/">github</a>.
+        </p>
+      </div>
+
+    </div> <!-- /container -->
+
+  <script src="//code.jquery.com/jquery.js"></script>
+  <script src="www/bootstrap.min.js"></script>
+  <script src="www/toc.js"></script>
+
+  </body>
+</html>

@@ -30,7 +30,6 @@ The phylogeny is typically constructed using genetic data (e.g., from sequence d
 
 
 ```{r,echo=FALSE, cache=TRUE}
-
 plot(read.tree(text="(((A,B),C),D);"),lwd=3,col="black")
 nodelabels(node=6,pch=16,cex=2)
 

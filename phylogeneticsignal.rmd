@@ -105,7 +105,7 @@ CatTrait$weight[CatTrait$Species=="Catopuma_badia"] = 5000
 CatTrait$weight[CatTrait$Species=="Oncifelis_colocolo"] = 3500
 CatTrait$weight[CatTrait$Species=="Oreailurus_jacobita"] = 5500
 
-write.csv(CatTrait,file="CatTrait.csv",row.names=FALSE)
+write.csv(CatTrait,file="data/CatTrait.csv",row.names=FALSE)
 ```
 
 
@@ -132,7 +132,7 @@ A failure to account for these phylogenetic relationships can lead to situations
 
 Since statistical independence is an underlying assumption of many statistical methods, it will come as no surprise that there are a number of methods available to deal with this. We will cover two of these methods -  the phylogenetic generalised least squares method and Felsenstein's (1985) independent contrasts method.
 
-```{r, echo = FALSE,eval=FALSE}
+```{r, echo = FALSE,eval=TRUE}
 #This code taken from Caper package by Dave Orme
 par(mfrow=c(2,2), mar=c(3,3,1,1), mgp=c(2,0.7,0))
 
@@ -190,7 +190,7 @@ As already described, phylogenetic generalised least squares models (pgls) can b
 Again, the function requires a *comparative data object* which includes both a data set and a phyogeny (created using the `comparative.data` function). We already created a comparative data object called `CatData` elsewhere. 
 
 ```{r}
-CatTrait <- read.csv("CatTrait.csv")
+CatTrait <- read.csv("data/CatTrait.csv")
 
 CatTrait <- CatTrait[,names(CatTrait)%in%c("Species","weight","longevity")]
 CatTrait$weight <- log(CatTrait$weight)

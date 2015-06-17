@@ -49,10 +49,8 @@ Imagine we are only interested in the relationships between the cats in this tre
 The first job in this case is to identify the relevant ancestral node. A quick and dirty method of doing this is to plot the tree and use the `nodelabels` command to see the node numbers. You could either print the tree to the screen, or you could produce a PDF and open it in *Preview* or *Acrobat* to view it. It may be necessary to use small labels (` ...cex=0.5)`), and zoom in on the image. 
 
 ```{r,cache=TRUE}
-pdf("figures/Carnivores.pdf",w=15,h=15)
 plot(CarnTree, type="cladogram", cex=0.5)
 nodelabels(cex=0.5)
-dev.off()
 ```
 
 If you are familiar with the genera in the Carnivora, you should see that the relevant node is node number 427. Armed with this information, we can find out which species subtend from this node using the `clade.members` command, which identifies all the tips that subtend from a particular ancestral node.
@@ -102,7 +100,7 @@ x[which.min(x)]
 
 One can save the tree out as either a Newick format tree or as a Nexus file.
 
-```{r,cache=TRUE}
+```{r,eval=FALSE}
 write.tree(CatTree,file="CatTree.tre")   # newick format
 write.nexus(CatTree,file="CatTree.nex")  # nexus format
 ```
@@ -110,7 +108,7 @@ write.nexus(CatTree,file="CatTree.nex")  # nexus format
 You can also output multiple trees in a single file. This can be very useful if, for example, you have several plausible trees. 
 To write out several Newick format trees they must first be concatenated into a `multiPhylo` list object using `c.phylo()`. 
 
-```{r}
+```{r,eval=FALSE}
 write.tree(c.phylo(CatTree,CarnTree),file="MyTrees.tre")
 ```
 

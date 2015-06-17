@@ -109,7 +109,7 @@ matlines(1:time.steps,eb,lty=1,col="#000000", lwd=1)
 
 * Calculate ED scores for the species in the cat tree.
 
-* How much is phylogenetic diversity reduced with the extinction of the snow leopard (*Uncia uncia*)?
+* How much is phylogenetic diversity reduced with the extinction of the snow leopard (_Uncia uncia_)?
 
 
 

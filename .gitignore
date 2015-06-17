@@ -20,12 +20,16 @@ temp.Rmd
 
 #ignore the data files
 anage_data.txt
+carnivores.tre
+CatTrait.csv
+CatTree.nex
+CatTree.tre
 COMADRE_v.1.0.0.RData
 COMPADRE_Nov_12_2014_Version_3.1.RData
-E090-184-metadata
-PanTHERIA_1-0_WR05_Aug2008.txt
+E090-184-metadata.html
 mammalsupertree.nex
+MyTrees.tre
+nexusexample.nex
+PanTHERIA_1-0_WR05_Aug2008.txt
 
-temp.Rmd
-
-_cache/*
+_cache*

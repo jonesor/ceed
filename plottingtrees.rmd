@@ -16,7 +16,7 @@ The basic tree plotting command is simply `plot()`. However, there is potentiall
 
 For example, we could use `which.edge` function to identify the ancestral edges leading to members of a particular clade. Then we can use this information to plot a cladogram (see figure) with the edges coloured to highlight a particular clade, in this case *Panthera*. We can also easily add a scale bar using the `add.scale.bar` function, or highlight a clade with the `rect` function. We could also use `mrca` and `nodelabels` to highlight the the most recent common ancestor of the lion and the domesticated cat.
 
-```{r}
+```{r,cache = TRUE}
 wh <- which.edge(CatTree,1:4)
 colo <- rep("black", dim(CatTree$edge)[1])
 colo[wh]<- "grey"
@@ -35,8 +35,8 @@ nodelabels(text=NULL,pch=16, node=x,col="red")
 
 You can ask R to draw the trees in any direction, with the `direction` argument in the `plot` function. For example,  `direction="downwards"`, `direction="upwards"` etc. In addition, the `plot` function can plot a number of other tree types including cladogram, fan-shaped trees, and radial trees (using the arguments, `type="cladogram"`, `type="fan"`, or `type="radial"` respectively (See figure below).
 
-```{r}
-par(mar=c(1,1,1, 1) + 0.1)
+```{r, echo=TRUE}
+par(mar=c(1,1,1,1) + 0.1)
 par(mfrow=c(1,3))
 plot(CatTree,type="c",lwd=1,xpd=NA)
 title(main="Cladogram")

@@ -13,6 +13,11 @@ vignettes/*.html
 vignettes/*.pdf
 .Rproj.user
 
+#temp files
+temp.rmd
+temp.html
+temp.Rmd
+
 #ignore the data files
 anage_data.txt
 COMADRE_v.1.0.0.RData
@@ -20,3 +25,7 @@ COMPADRE_Nov_12_2014_Version_3.1.RData
 E090-184-metadata
 PanTHERIA_1-0_WR05_Aug2008.txt
 mammalsupertree.nex
+
+temp.Rmd
+
+_cache/*

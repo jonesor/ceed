@@ -15,7 +15,7 @@ output: bookdown::html_chapter
 ## Other useful functions {#useful-functions}
 
 
-### In caper
+### In caper {#caper}
 
 `clade.members` - identify the members of a clade descending from a node.
 
@@ -23,7 +23,7 @@ output: bookdown::html_chapter
 
 
 
-### In ape
+### In ape {#ape}
 
 `is.ultrametric` - tests whether a tree is ultrametric.
 

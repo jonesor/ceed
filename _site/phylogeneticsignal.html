@@ -114,9 +114,9 @@ CatData &lt;-<span class="st"> </span><span class="kw">comparative.data</span>(<
 <span class="co">#&gt; required to match phylogeny and data. Data are returned unsorted. Assuming</span>
 <span class="co">#&gt; that data and phy$tip.label are in the same order!</span>
 <span class="co">#&gt;          K PIC.variance.obs PIC.variance.rnd.mean PIC.variance.P</span>
-<span class="co">#&gt; 1 1.193931       0.08622628             0.1781091          0.001</span>
+<span class="co">#&gt; 1 1.193931       0.08622628             0.1796677          0.001</span>
 <span class="co">#&gt;   PIC.variance.Z</span>
-<span class="co">#&gt; 1      -3.648309</span></code></pre></div>
+<span class="co">#&gt; 1      -3.579033</span></code></pre></div>
 <p>In this example, the K test statistic is highly-significant (p = 0.001).</p>
 <h2 id="lambda">Pagel’s lambda</h2>
 <p><em>If strong phylogenetic signal exists, then we would expect the structure of the phylogeny to have a large influence on the traits observed at the tip of the tree.</em> Pagel’s <span class="math inline"><em>λ</em></span> statistic capitalises on this idea by checking what happens to a model that includes the phylogenetic structure, as structure is eroded.</p>
@@ -182,9 +182,9 @@ redPhyloD &lt;-<span class="st"> </span><span class="kw">phylo.d</span>(BritishB
 <span class="co">#&gt;   Phylogeny :  BritishBirds.tree</span>
 <span class="co">#&gt;   Number of permutations :  1000</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Estimated D :  0.5536957</span>
-<span class="co">#&gt; Probability of E(D) resulting from no (random) phylogenetic structure :  0</span>
-<span class="co">#&gt; Probability of E(D) resulting from Brownian phylogenetic structure    :  0.026</span></code></pre></div>
+<span class="co">#&gt; Estimated D :  0.559114</span>
+<span class="co">#&gt; Probability of E(D) resulting from no (random) phylogenetic structure :  0.005</span>
+<span class="co">#&gt; Probability of E(D) resulting from Brownian phylogenetic structure    :  0.021</span></code></pre></div>
 <h2 id="controlling-for-signal">What do we mean when we control for phylogenetic signal?</h2>
 <p>As we have already seen, the tree-like structure in the relationships between species mean that all species are related. The degree of relatedness is continuous: some species are closely related, others are distantly related, and still more are somewhere in between. Technically, this relatedness is a special form of <strong>autocorrelation</strong> and, like other forms of autocorrelation, it means that data on species traits cannot be considered to be independent. In a <code>pgls</code>, as used to estimate phylogenetic signal, the variance-covariance matrix describes this relationship.</p>
 <p>A failure to account for these phylogenetic relationships can lead to situations where apparently strong relationships rest on few independent events (Figure below), or where strong relationships within groups are masked by the phylogenetic differences between groups (Figure below).</p>

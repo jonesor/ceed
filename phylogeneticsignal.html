@@ -74,7 +74,7 @@ MathJax.Hub.Queue(function() {
       <div class="row">
         <div class="col-xs-12 col-sm-3" id="nav">
         <div class="well">
-         ...
+         jones@biology.sdu.dk
         </div>
 
 
@@ -114,9 +114,9 @@ CatData &lt;-<span class="st"> </span><span class="kw">comparative.data</span>(<
 <span class="co">#&gt; required to match phylogeny and data. Data are returned unsorted. Assuming</span>
 <span class="co">#&gt; that data and phy$tip.label are in the same order!</span>
 <span class="co">#&gt;          K PIC.variance.obs PIC.variance.rnd.mean PIC.variance.P</span>
-<span class="co">#&gt; 1 1.193931       0.08622628              0.179437          0.001</span>
+<span class="co">#&gt; 1 1.193931       0.08622628             0.1796677          0.001</span>
 <span class="co">#&gt;   PIC.variance.Z</span>
-<span class="co">#&gt; 1      -3.544814</span></code></pre></div>
+<span class="co">#&gt; 1      -3.579033</span></code></pre></div>
 <p>In this example, the K test statistic is highly-significant (p = 0.001).</p>
 <h2 id="lambda">Pagel’s lambda</h2>
 <p><em>If strong phylogenetic signal exists, then we would expect the structure of the phylogeny to have a large influence on the traits observed at the tip of the tree.</em> Pagel’s <span class="math inline"><em>λ</em></span> statistic capitalises on this idea by checking what happens to a model that includes the phylogenetic structure, as structure is eroded.</p>
@@ -182,18 +182,19 @@ redPhyloD &lt;-<span class="st"> </span><span class="kw">phylo.d</span>(BritishB
 <span class="co">#&gt;   Phylogeny :  BritishBirds.tree</span>
 <span class="co">#&gt;   Number of permutations :  1000</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Estimated D :  0.5576955</span>
-<span class="co">#&gt; Probability of E(D) resulting from no (random) phylogenetic structure :  0.001</span>
-<span class="co">#&gt; Probability of E(D) resulting from Brownian phylogenetic structure    :  0.017</span></code></pre></div>
+<span class="co">#&gt; Estimated D :  0.559114</span>
+<span class="co">#&gt; Probability of E(D) resulting from no (random) phylogenetic structure :  0.005</span>
+<span class="co">#&gt; Probability of E(D) resulting from Brownian phylogenetic structure    :  0.021</span></code></pre></div>
 <h2 id="controlling-for-signal">What do we mean when we control for phylogenetic signal?</h2>
 <p>As we have already seen, the tree-like structure in the relationships between species mean that all species are related. The degree of relatedness is continuous: some species are closely related, others are distantly related, and still more are somewhere in between. Technically, this relatedness is a special form of <strong>autocorrelation</strong> and, like other forms of autocorrelation, it means that data on species traits cannot be considered to be independent. In a <code>pgls</code>, as used to estimate phylogenetic signal, the variance-covariance matrix describes this relationship.</p>
 <p>A failure to account for these phylogenetic relationships can lead to situations where apparently strong relationships rest on few independent events (Figure below), or where strong relationships within groups are masked by the phylogenetic differences between groups (Figure below).</p>
 <p>Since statistical independence is an underlying assumption of many statistical methods, it will come as no surprise that there are a number of methods available to deal with this. We will cover two of these methods - the phylogenetic generalised least squares method and Felsenstein’s (1985) independent contrasts method.</p>
+<p><img src="figures/phyloautocorr-1.png" title="" alt="" width="384" /></p>
 <p><em>Phylogenetic autocorrelation. (a) The ordinary least squares (ols) regression (solid line) implies a strong relationship between the two traits. However, the relationship within the individual clades is far from strong. The relationship simply reflects a change in the mean value between clades. (b) The ols regression shows a fairly weak relationship between the two traits. However, within the clades the relationships are strongly positive. (Reproduced from Orme et al. 2011)</em></p>
 <h2 id="pgls">Phylogenetic Generalised Least Squares (pgls)</h2>
 <p>As already described, phylogenetic generalised least squares models (pgls) can be fit using the <code>pgls</code> function, from the <code>caper</code> package in R. The branch length transformation that is applied is part of the model. It makes particular assumptions about how evolution has proceeded. One of the questions we must ask is whether the transformation chosen (and the parameter value of the transformation) is appropriate. We will address these questions in the following few examples. Using a PGLS model has the advantage of allowing the simultaneous estimation of signal <em>and</em> the fitting of a phylogenetically corrected regression model.</p>
 <p>Again, the function requires a <em>comparative data object</em> which includes both a data set and a phyogeny (created using the <code>comparative.data</code> function). We already created a comparative data object called <code>CatData</code> elsewhere.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CatTrait &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;CatTrait.csv&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CatTrait &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/CatTrait.csv&quot;</span>)
 
 CatTrait &lt;-<span class="st"> </span>CatTrait[,<span class="kw">names</span>(CatTrait)%in%<span class="kw">c</span>(<span class="st">&quot;Species&quot;</span>,<span class="st">&quot;weight&quot;</span>,<span class="st">&quot;longevity&quot;</span>)]
 CatTrait$weight &lt;-<span class="st"> </span><span class="kw">log</span>(CatTrait$weight)
@@ -279,7 +280,7 @@ model3 &lt;-<span class="st"> </span><span class="kw">pgls</span>(<span class="k
 <span class="kw">abline</span>(model3,<span class="dt">lty=</span><span class="dv">2</span>)
 
 <span class="kw">legend</span>(<span class="st">&quot;bottomright&quot;</span>,<span class="dt">legend=</span><span class="kw">c</span>(<span class="st">&quot;lambda = 1&quot;</span>,<span class="st">&quot;optimised lambda&quot;</span>,<span class="st">&quot;lambda = 0&quot;</span>),<span class="dt">lty=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>),<span class="dt">lwd=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>))</code></pre></div>
-<p><img src="figures/unnamed-chunk-10-1.png" title="" alt="" width="384" /> <em>This figure shows regression models for different values of <span class="math inline"><em>λ</em></span>. In this case, the phylogeny does not make a big difference.</em></p>
+<p><img src="figures/phyloregression-1.png" title="" alt="" width="384" /> <em>This figure shows regression models for different values of <span class="math inline"><em>λ</em></span>. In this case, the phylogeny does not make a big difference.</em></p>
 <p>Other, biologically-informed transformations exist, and different modes of evolution can be investigated by checking the fits of models with various evolutionarily meaningful transformations.</p>
 <p>Pagel’s delta (<span class="math inline"><em>δ</em></span>) transformation is a model of evolution where rates of trait change increase or decrease through time. Values of delta &lt; 1 transform branch lengths to be increasingly shorter towards the tips, describing a model in which trait change occurs rapidly early in the history of a clade and then slows through time. Models with delta &gt; 1 describe an increasing rate of character evolution through time, while delta = 0 is identical to a Brownian motion model. This is therefore akin to Early Burst model.</p>
 <p>Pagel’s kappa (<span class="math inline"><em>κ</em></span>) transformation model raises branch lengths to the power of kappa. A punctuational model is specified when kappa = 0 and all branch lengths are equal. Again, the model reduces to Brownian Motion when kappa = 1. Values of kappa between 0 and 1 tend to shorten long branch lengths more than short ones, describing a model of saturating evolution (i.e. radiation into a finite number of niches). This should not be confused with Blomberg’s K!</p>
@@ -322,17 +323,17 @@ mod2.lambda &lt;-<span class="st"> </span><span class="kw">pgls.profile</span>(m
 mod2.delta &lt;-<span class="st"> </span><span class="kw">pgls.profile</span>(model2, <span class="st">&quot;delta&quot;</span>)
 mod2.kappa &lt;-<span class="st"> </span><span class="kw">pgls.profile</span>(model2, <span class="st">&quot;kappa&quot;</span>)
 <span class="kw">plot</span>(mod2.lambda)</code></pre></div>
-<p><img src="figures/unnamed-chunk-11-1.png" title="" alt="" width="384" /></p>
+<p><img src="figures/pglsprofiles-1.png" title="" alt="" width="384" /></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(mod2.delta)</code></pre></div>
-<p><img src="figures/unnamed-chunk-11-2.png" title="" alt="" width="384" /></p>
+<p><img src="figures/pglsprofiles-2.png" title="" alt="" width="384" /></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(mod2.kappa)</code></pre></div>
-<p><img src="figures/unnamed-chunk-11-3.png" title="" alt="" width="384" /></p>
-<p><img src="figures/unnamed-chunk-12-1.png" title="" alt="" width="384" /> <em>Likelihood surfaces of <span class="math inline"><em>λ</em></span>, <span class="math inline"><em>δ</em></span> and <span class="math inline"><em>κ</em></span> for model1.</em></p>
+<p><img src="figures/pglsprofiles-3.png" title="" alt="" width="384" /></p>
+<p><img src="figures/likelihoodsurf-1.png" title="" alt="" width="384" /> <em>Likelihood surfaces of <span class="math inline"><em>λ</em></span>, <span class="math inline"><em>δ</em></span> and <span class="math inline"><em>κ</em></span> for model1.</em></p>
 <h2 id="model-criticism">Model criticism in PGLS</h2>
 <p>Like other model objects in R, PGLS models can be examined using <code>plot(model)</code>. This is best done in a 2x2 plot, using <code>par(mfrow=c(2,2))</code>. In this layout (Figure below), the top two plots are a density plot of the residuals, and a normal Q-Q plot, which shows the distribution of the residuals vs. their expected theoretical distribution. The bottom two plots show the fitted values against the residuals, and against the observed values, so we can check for pattern in the residuals of the model</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))
 <span class="kw">plot</span>(model2)</code></pre></div>
-<p><img src="figures/unnamed-chunk-13-1.png" title="" alt="" width="384" /> <em>Diagnostic plots of model2, from above.</em></p>
+<p><img src="figures/diagnosticsModel2-1.png" title="" alt="" width="384" /> <em>Diagnostic plots of model2, from above.</em></p>
 <p>In addition, models can be compared using <code>anova</code> and <code>logLik</code>. It is also possible to obtain the <code>AIC</code> score.</p>
 <p>Therefore, it is possible to test and compare a range of models.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CatData &lt;-<span class="st"> </span><span class="kw">comparative.data</span>(<span class="dt">data =</span> CatTrait, <span class="dt">phy =</span> CatTree, <span class="dt">names.col =</span> <span class="st">&quot;Species&quot;</span>,<span class="dt">na.omit=</span><span class="ot">FALSE</span>,<span class="dt">vcv=</span><span class="ot">TRUE</span>, <span class="dt">vcv.dim=</span><span class="dv">3</span>)

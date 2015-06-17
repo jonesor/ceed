@@ -74,7 +74,7 @@ MathJax.Hub.Queue(function() {
       <div class="row">
         <div class="col-xs-12 col-sm-3" id="nav">
         <div class="well">
-         ...
+         jones@biology.sdu.dk
         </div>
 
 
@@ -100,7 +100,7 @@ colo[wh]&lt;-<span class="st"> &quot;grey&quot;</span>
 
 x &lt;-<span class="st"> </span><span class="kw">mrca</span>(CatTree)[<span class="st">&quot;Felis_silvestris&quot;</span>, <span class="st">&quot;Panthera_leo&quot;</span>]
 <span class="kw">nodelabels</span>(<span class="dt">text=</span><span class="ot">NULL</span>,<span class="dt">pch=</span><span class="dv">16</span>, <span class="dt">node=</span>x,<span class="dt">col=</span><span class="st">&quot;red&quot;</span>)</code></pre></div>
-<p><img src="figures/unnamed-chunk-2-1.png" title="" alt="" width="384" /></p>
+<p><img src="figures/CatTree1-1.png" title="" alt="" width="384" /></p>
 <p><em>Note:</em> a <em>cladogram</em> is different from a <em>phylogram</em> (the default form taken when plotting a phylo object) in that it ignores branch lengths and represents the topology of the tree with arbitrary branch lengths.</p>
 <h2 id="othertypes">Different forms of tree plots</h2>
 <p>You can ask R to draw the trees in any direction, with the <code>direction</code> argument in the <code>plot</code> function. For example, <code>direction=&quot;downwards&quot;</code>, <code>direction=&quot;upwards&quot;</code> etc. In addition, the <code>plot</code> function can plot a number of other tree types including cladogram, fan-shaped trees, and radial trees (using the arguments, <code>type=&quot;cladogram&quot;</code>, <code>type=&quot;fan&quot;</code>, or <code>type=&quot;radial&quot;</code> respectively (See figure below).</p>
@@ -114,7 +114,7 @@ x &lt;-<span class="st"> </span><span class="kw">mrca</span>(CatTree)[<span clas
 
 <span class="kw">plot</span>(CatTree,<span class="dt">type=</span><span class="st">&quot;radial&quot;</span>,<span class="dt">lwd=</span><span class="dv">1</span>,<span class="dt">xpd=</span><span class="ot">NA</span>)
 <span class="kw">title</span>(<span class="dt">main=</span><span class="st">&quot;Radial&quot;</span>)</code></pre></div>
-<p><img src="figures/unnamed-chunk-3-1.png" title="" alt="" width="384" /></p>
+<p><img src="figures/treetypes-1.png" title="" alt="" width="384" /></p>
 
         </div>
       </div>

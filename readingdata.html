@@ -74,7 +74,7 @@ MathJax.Hub.Queue(function() {
       <div class="row">
         <div class="col-xs-12 col-sm-3" id="nav">
         <div class="well">
-         ...
+         jones@biology.sdu.dk
         </div>
 
 
@@ -100,13 +100,13 @@ MathJax.Hub.Queue(function() {
 <p>The most popular way of representing a tree is in a parenthetic (or “bracketed”) style known as the <strong>Newick format</strong>. For example, the tree below was produced by the following code:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tree1 &lt;-<span class="st"> </span><span class="kw">read.tree</span>(<span class="dt">text=</span><span class="st">&quot;(((A,B),C),D);&quot;</span>)
 <span class="kw">plot</span>(tree1)</code></pre></div>
-<p><img src="figures/unnamed-chunk-2-1.png" title="" alt="" width="384" /></p>
+<p><img src="figures/simpletree-1.png" title="" alt="" width="384" /></p>
 <p>The object that is created with the <code>read.tree</code> command is stored in R as a <code>phylo</code> class object. This is the fundamental class of object used in phylogenetic analyses in R and we will investigate it more thoroughly later.</p>
 <p>Where there is no edge length information Newick trees are clearly straightforward. You should be able to see the logic: A and B are “sister” species and are thus grouped within brackets, and together they are a sister group to C, and then the clade containing A, B and C are sister to D.</p>
 <p>Where edge length information is also available there is the added complication of representing this information. However this is also straightforward: for Newick trees, the information is included in the bracketed text, after a colon. For example, the tree in the example below is topologically identical to the one in below but has additional edge length data:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tree2 &lt;-<span class="st"> </span><span class="kw">read.tree</span>(<span class="dt">text=</span><span class="st">&quot;(((A:4,B:4):3,C:7):10,D:17);&quot;</span>)
 <span class="kw">plot</span>(tree2)</code></pre></div>
-<p><img src="figures/unnamed-chunk-3-1.png" title="" alt="" width="384" /></p>
+<p><img src="figures/simpletreeBL-1.png" title="" alt="" width="384" /></p>
 <p>As with other objects in R, one can ask R to summarise the <code>phylo</code> object and doing so gives us some basic information such as the number of tips, nodes, and branch lengths.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(tree2)
 <span class="co">#&gt; </span>
@@ -145,7 +145,7 @@ tree2$tip.label
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tree2 &lt;-<span class="st"> </span><span class="kw">read.tree</span>(<span class="dt">text=</span><span class="st">&quot;(((A:4,B:4):3,C:7):10,D:17);&quot;</span>)
 <span class="kw">plot</span>(tree2)
 <span class="kw">nodelabels</span>()</code></pre></div>
-<p><img src="figures/unnamed-chunk-6-1.png" title="" alt="" width="384" /></p>
+<p><img src="figures/simpletreenodelabels-1.png" title="" alt="" width="384" /></p>
 <h2 id="nexus-files">Importing trees from Newick format</h2>
 <p>It is not particularly desirable to have to type out trees in Newick format every time you want to anaylse them. Conveniently, you can also read in trees that are saved elsewhere, for example when produced by another program as a text file. When importing from a text file, each tree should be in a single line of text in Newick format. The <code>read.tree</code> function can read in multiple trees in this format, with each tree on a separate line. In this case, the object returned by R will be a <code>multiphylo</code> class object, which is a list that contains several phylo objects. Individual trees can be selected from the object using R’s standard indexing notation (e.g. <code>my.trees.object[[1]]</code>, <code>my.trees.object[[2]]</code>).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CarnTree &lt;-<span class="st"> </span><span class="kw">read.tree</span>(<span class="dt">file=</span><span class="st">&quot;data/carnivores.tre&quot;</span>)

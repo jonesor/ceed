@@ -74,7 +74,7 @@ MathJax.Hub.Queue(function() {
       <div class="row">
         <div class="col-xs-12 col-sm-3" id="nav">
         <div class="well">
-         ...
+         jones@biology.sdu.dk
         </div>
 
 
@@ -106,15 +106,12 @@ tree2&lt;-<span class="kw">drop.tip</span>(mytree,<span class="st">&quot;C&quot;
 <p>Lets have a look at the carnivore tree (<code>CarnTree</code>).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CarnTree &lt;-<span class="st"> </span><span class="kw">read.tree</span>(<span class="dt">file =</span> <span class="st">&quot;data/carnivores.tre&quot;</span>)
 <span class="kw">plot</span>(CarnTree, <span class="dt">cex=</span><span class="fl">0.5</span>)</code></pre></div>
-<p><img src="figures/unnamed-chunk-4-1.png" title="" alt="" width="384" /></p>
+<p><img src="figures/carntree-1.png" title="" alt="" width="384" /></p>
 <p>Imagine we are only interested in the relationships between the cats in this tree (figure below). We can subset the tree in one of two ways. The first way is to identify the relevant ancestral node on the tree, and ask which species subtend from this node.</p>
 <p>The first job in this case is to identify the relevant ancestral node. A quick and dirty method of doing this is to plot the tree and use the <code>nodelabels</code> command to see the node numbers. You could either print the tree to the screen, or you could produce a PDF and open it in <em>Preview</em> or <em>Acrobat</em> to view it. It may be necessary to use small labels (<code>...cex=0.5)</code>), and zoom in on the image.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pdf</span>(<span class="st">&quot;figures/Carnivores.pdf&quot;</span>,<span class="dt">w=</span><span class="dv">15</span>,<span class="dt">h=</span><span class="dv">15</span>)
-<span class="kw">plot</span>(CarnTree, <span class="dt">type=</span><span class="st">&quot;cladogram&quot;</span>, <span class="dt">cex=</span><span class="fl">0.5</span>)
-<span class="kw">nodelabels</span>(<span class="dt">cex=</span><span class="fl">0.5</span>)
-<span class="kw">dev.off</span>()
-<span class="co">#&gt; quartz_off_screen </span>
-<span class="co">#&gt;                 2</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(CarnTree, <span class="dt">type=</span><span class="st">&quot;cladogram&quot;</span>, <span class="dt">cex=</span><span class="fl">0.5</span>)
+<span class="kw">nodelabels</span>(<span class="dt">cex=</span><span class="fl">0.5</span>)</code></pre></div>
+<p><img src="figures/nodelabels-1.png" title="" alt="" width="384" /></p>
 <p>If you are familiar with the genera in the Carnivora, you should see that the relevant node is node number 427. Armed with this information, we can find out which species subtend from this node using the <code>clade.members</code> command, which identifies all the tips that subtend from a particular ancestral node.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">clade.members</span>(<span class="dv">427</span>,CarnTree,<span class="dt">tip.labels=</span><span class="ot">TRUE</span>)
 <span class="co">#&gt;  [1] &quot;Acinonyx_jubatus&quot;         &quot;Pardofelis_marmorata&quot;    </span>

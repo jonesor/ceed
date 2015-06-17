@@ -1,35 +1,94 @@
 <!DOCTYPE html>
+<html>
+  <head>
+    <title>Phylogenies and trait evolution &middot; CEED Workshop</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+    <link href="www/bootstrap.min.css" rel="stylesheet">
+    <link href="www/highlight.css" rel="stylesheet">
+    <link href="www/extras.css" rel="stylesheet">
 
-<head>
+    <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700'
+      rel='stylesheet' type='text/css'>
+  </head>
 
-<meta charset="utf-8">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
-<meta name="generator" content="pandoc" />
+  <body>
 
-<title>Phylogenies and trait evolution</title>
-
-<script src="www/jquery-1.11.0/jquery.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="www/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
-<script src="www/bootstrap-3.3.1/js/bootstrap.min.js"></script>
-<script src="www/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
-<script src="www/bootstrap-3.3.1/shim/respond.min.js"></script>
-
-
-
-
-</head>
-
-<body>
-
-<div class="container">
+<style TYPE="text/css">
+code.has-jax {font: inherit; font-size: 100%; background: inherit; border: inherit;}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] // removed 'code' entry
+    }
+});
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
 
 
-<!---
+
+
+    <div class="container">
+
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Table of contents<b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu pull-right" role="menu">
+              <li><a href="Introduction.html">Introduction</a></li>
+
+<li class="dropdown-header">Basics</li>
+<li><a href="readingdata.html">Reading data</a></li>
+<li><a href="manipulatingtrees.html">Manipulating Trees</a></li>
+<li><a href="plottingtrees.html">Plotting Trees</a></li>
+<li><a href="phylogeneticsignal.html">Phylogenetic Signal</a></li>
+
+
+<li class="dropdown-header">Exercises</li>
+<li><a href="exercises.html">Exercises</a></li>
+<li><a href="signal.html">Signal in Demographic Traits</a></li>
+
+<li class="dropdown-header">More</li>
+<li><a href="usefulfunctionsanddata.html">Useful stuff</a></li>
+
+            </ul>
+          </li>
+        </ul>
+
+        <h3 class="muted"><a href="/ceed/">CEED Workshop Material</a> <small>by Owen Jones</small></h3>
+        <hr>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12 col-sm-3" id="nav">
+        <div class="well">
+         ...
+        </div>
+
+
+        <h4>Page contents</h4>
+          <ul class="list-unstyled" id="toc"></ul>
+
+          <hr>
+
+
+
+        </div>
+
+    <div id="content" class="col-xs-12 col-sm-8 pull-right">
+          <!---
 1. Use standard R Markdown.
 2. Headings with "##" will be automatically turned into table of contents. Therefore, for longer tutorials please use this facility.
 3. Check that R studio will knit into an HTML document.
@@ -48,25 +107,30 @@
 <h2 id="trait-evolution">How do continuous traits evolve?</h2>
 <p>Evolutionary biologists have produced a number of models that characterise the evolution of traits through time (see the figure below). For the time being we will focus solely on continuous traits such as body mass or skeletal size etc. The most important models are probably the following three:</p>
 <p><strong>Brownian motion (BM):</strong> The BM model is the simplest. This model assumes that, through time, traits evolve via a random walk process. In this model there is no optimum value for the trait, and there are no processes (e.g. selection) that influence the trait value. Variation is unbounded and accumulates linearly as a function of time, and the expected difference in trait value (i.e. the mean value) is zero.</p>
-<p><strong>Ornstein-Uhlenbeck (OU):</strong> The OU model is derived from the Brownian motion model, but has an additional “constraint parameter” (<span class="math">\[\alpha\]</span>), which pulls the trait value towards the long term mean. This mean can be conceptualised as the optimum value for a particular trait. The result of this model is a much more bounded set of trait values, but again, the mean trait value is zero. When <span class="math">\(\alpha\)</span> is 0, the model is equivalent to the BM model. Strong OU signal could be indicative of stabilising selection.</p>
+<p><strong>Ornstein-Uhlenbeck (OU):</strong> The OU model is derived from the Brownian motion model, but has an additional “constraint parameter” (<br /><span class="math display"><em>α</em></span><br />), which pulls the trait value towards the long term mean. This mean can be conceptualised as the optimum value for a particular trait. The result of this model is a much more bounded set of trait values, but again, the mean trait value is zero. When <span class="math inline"><em>α</em></span> is 0, the model is equivalent to the BM model. Strong OU signal could be indicative of stabilising selection.</p>
 <p><strong>Early Burst (EB):</strong> The EB model is also derived from the Brownian motion model, and is sometimes termed the ACDC model (short for Accelerating/Decelerating). Like the OU model, this model includes an extra parameter (<code>r</code>) which describes how the rate of evolution changes exponentially through time. The result is that, when <code>r</code> is negative, the evolution of a continuous trait takes place rapidly at first, and decelerates with time (conversely, when <code>r</code> is positive, rates accelerate). When <code>r</code> is 0, the model is equivalent to the BM model. This model, when <code>r</code> is negative, would be like an adaptive radiation into a fixed number of niches.</p>
 <p>When conducting phylogenetic analyses, it is a good idea to bear in mind that you are assuming a model of trait evolution, and that your assumptions may not be incorrect. Furthermore, an often overlooked point, is that phylogenetic signal will arise even with a stochastic model (e.g. Brownian motion model), and some mode of evolution can act to obscure signal.</p>
 <p><img src="figures/unnamed-chunk-4-1.png" title="" alt="" width="384" /></p>
-<p><em>This plot shows simulations of continuous trait evolution under Brownian motion (BM) (grey), Ornstein-Uhlenbeck (OU) (red), and Early Burst (EB) (blue) models. The OU <code>\alpha</code> value is set to -0.1, and the EB <code>r</code> value is set to -0.2 while the mean and standard deviation for all three models were set to 0 and 1 respectively. There are 50 simulations per model.</em></p>
+<p><em>This plot shows simulations of continuous trait evolution under Brownian motion (BM) (grey), Ornstein-Uhlenbeck (OU) (red), and Early Burst (EB) (blue) models. The OU <span class="math inline"><em>α</em></span> value is set to -0.1, and the EB <code>r</code> value is set to -0.2 while the mean and standard deviation for all three models were set to 0 and 1 respectively. There are 50 simulations per model.</em></p>
 <p>From these simple models it should become apparent to you that the reason that closely related species tend to have mode similar trait values than distantly related species is because there has not been much time for divergence to occur since speciation. However, after some more thought it should also become apparent that the similarity of the traits could depend on the mode of evolution. For example, under the OU model, the effect of branch length on variance dies out after a short time, and so the traits can be quite similar to each other, even after a long divergence time.</p>
 
+        </div>
+      </div>
 
-</div>
+      <div class="footer">
+        <hr>
+        <p>Based on Hadley Wickham's Advanced R Programming site. Powered by <a href="http://jekyllrb.com/">jekyll</a>,
+          <a href="http://yihui.name/knitr/">knitr</a>, and
+          <a href="http://johnmacfarlane.net/pandoc/">pandoc</a>. Source
+          available on <a href="https://github.com/jonesor/ceed/">github</a>.
+        </p>
+      </div>
 
-<script>
+    </div> <!-- /container -->
 
-// add bootstrap table styles to pandoc tables
-$(document).ready(function () {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
-});
+  <script src="//code.jquery.com/jquery.js"></script>
+  <script src="www/bootstrap.min.js"></script>
+  <script src="www/toc.js"></script>
 
-</script>
-
-
-</body>
+  </body>
 </html>

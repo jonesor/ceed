@@ -10,7 +10,7 @@
 ## Other useful functions {#useful-functions}
 
 
-### In caper
+### In caper {#caper}
 
 `clade.members` - identify the members of a clade descending from a node.
 
@@ -18,7 +18,7 @@
 
 
 
-### In ape
+### In ape {#ape}
 
 `is.ultrametric` - tests whether a tree is ultrametric.
 

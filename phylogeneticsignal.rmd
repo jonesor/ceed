@@ -27,11 +27,11 @@ The idea behind the measure is to ask whether the tree in question better fits a
 
 Firstly a test statistic is calculated. This is usually variance of the phylogenetic contrasts (we'll come onto this later, but for now think of contrasts as differences between traits). *If signal is strong, then related species will tend to have similar traits, and therefore the variance will be low.* The significance of the $K$ value is determined by repeatedly shuffling the data at the tips and recalculating the test statistic. The p-value can then be determined by a 1-tailed test. In other words you ask what proportion of the permutations were less than the test statistic.
 
-Although it is very easy to do this "by hand" in R, the $K$ value, and it's significance, can be estimated with the `Kcalc` function of the `picante` package. The `phylosignal` function, also from `picante` is a wrapper for `Kcalc` that tests the significance of $K$.
+Although it is very easy to do this "by hand" in R by writing your own function, the $K$ value, and it's significance, can be estimated with the `Kcalc` function of the `picante` package. The `phylosignal` function, also from `picante` is a wrapper for `Kcalc` that tests the significance of $K$.
 
 We must first read in some data. It is advisable to put it into a `comparative.data` object to ensure that the tips match up correctly with the data.
 
-```{r}
+```{r, cache=TRUE}
 CatTrait <- read.csv("data/CatTrait.csv")
 CatTrait$weight <- log(CatTrait$weight)
 CatData <- comparative.data(data = CatTrait, phy = CatTree, names.col = "Species",na.omit=FALSE)
@@ -52,65 +52,7 @@ This approach uses a phylogenetic generalised least squares (PGLS) model. These 
 
 Pagel's $\lambda$ is a transformation parameter that alters the length of the *internal* branch lengths the phylogenetic tree (Figure below). The effect of applying it is that phylogenetic structure is eroded as $\lambda$ is reduced from 1 towards 0. When $\lambda$ is equal to 0, all phylogenetic structure is removed, and all species are effectively phylogenetically independent (they are in a "star phylogeny"). When $\lambda$ is 1, traits covary in direct proportion to shared evolutionary history (i.e. they conform to Brownian motion). Therefore we can consider $\lambda$ to be a measure of the strength of signal. 
 
-
-```{r, echo=FALSE,eval = FALSE}
-## demo tree
-z <- structure(list(edge = structure(c(11L, 15L, 18L, 18L, 15L, 16L, 
-16L, 11L, 12L, 13L, 13L, 19L, 19L, 12L, 14L, 14L, 17L, 17L, 15L, 
-18L, 1L, 2L, 16L, 3L, 4L, 12L, 13L, 5L, 19L, 6L, 7L, 14L, 8L, 
-17L, 9L, 10L), .Dim = c(18L, 2L)), edge.length = c(5.723, 2.186, 
-1.09, 1.09, 0.627, 2.649, 2.649, 1.049, 1.411, 6.54, 5.538, 1.001, 
-1.001, 1.863, 6.088, 4.777, 1.312, 1.312), tip.label = c("t8", 
-"t6", "t4", "t10", "t9", "t5", "t7", "t1", "t3", "t2"), Nnode = 9L), .Names = c("edge", 
-"edge.length", "tip.label", "Nnode"), class = "phylo", order = "cladewise")
-V <- VCV.array(z)
-
-ec <- rep('grey50', 18)
-ec[c(1,5,7)] <- 'red'
-ec[c(8,14)] <- 'blue'
-#plot(z, no.margin=TRUE, cex=0.6, label.offset=0.3, edge.col=ec)
-
-#\begin{array}{*{10}{P}}
-	 V <- VCV.array(z)
-	 V <- V[10:1,10:1]
-	 xV <- xtable(unclass(V), digits=1)
-	 #print(xV, only.contents=TRUE, include.rownames=FALSE, 
-	       #hline.after=NULL, include.colnames=FALSE, digits=1)
-
-
-
-## internal branch lengths
-internal <- z$edge[,2] > 10
-vlines <- 9 * c(0, 0.5, 1, 1.5)
-zz <- z
-
-# layout
-layout(matrix(c(1:3), ncol=3))
-#par(mar=c(0.5,0.5,2,0.5))
-par(mar=c(5, 4, 4, 2) + 0.1)
-cx <- 0.8
-ln <- 0.5
-xl <- c(0,12)
-
-
-# lambda
-pvals <- c(.5, 0)
-ec <- ifelse(internal,'red', 'grey30')
-
-plot(z,  edge.col=ec, x.lim=xl, label.offset=0.2)
-abline(v=vlines, lty=2, col='grey')
-mtext(expression(lambda == 1), side=3, cex=cx, line=ln)
-
-zz$edge.length <- ifelse(internal, z$edge.length*pvals[1], z$edge.length)
-plot(zz, edge.col=ec, x.lim=xl, label.offset=0.2)
-mtext(bquote(lambda == .(pvals[1])), side=3, cex=cx, line=ln)
-abline(v=vlines, lty=2, col='grey')
-
-zz$edge.length <- ifelse(internal, z$edge.length*pvals[2], z$edge.length)
-plot(zz,  edge.col=ec, x.lim=xl, label.offset=0.2)
-mtext(bquote(lambda == .(pvals[2])), side=3, cex=cx, line=ln)
-abline(v=vlines, lty=2, col='grey')
-```
+[FIGURE HERE]
 
 *The effect of the $\lambda$ branch length transformation on the tree. When $\lambda$ is 1, the original tree is recovered, and as $\lambda$ is reduced towards 0, phylogenetic structure is eroded, until $\lambda$ = 0, when the phylogeny becomes a star phylogeny (a giant polytomy). Only internal branches are affected.*
 

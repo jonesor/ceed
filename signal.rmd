@@ -20,7 +20,7 @@ I will illustrate how to do this using mammals.
 
 Import the mammal tree. The mammalian supertree is in a Nexus file. It will be loaded as a `multiPhylo` object with 3 trees (`bestDates`, `lowerDates`, `upperDates`). I will use the `bestDates` tree.
 
-```{r}
+```{r, cache=TRUE}
 mammalTree <- read.nexus("data/mammalsupertree.nex")
 mammalTree <- mammalTree$mammalST_bestDates
 summary(mammalTree)
@@ -59,6 +59,7 @@ pantheria <- read.delim("data/PanTHERIA_1-0_WR05_Aug2008.txt",na.strings = "-999
 myData <- data.frame(binomial = pantheria$MSW05_Binomial, bodyMass = pantheria$X5.1_AdultBodyMass_g)
 myData$binomial <- gsub(pattern = " ",replacement = "_",myData$binomial)
 #newmd <- merge(comadre$metadata,myData,by="binomial",all.x=TRUE,sort = FALSE)
+#Note that the sort argument in merge() works in unexpected ways
 comadre$metadata$bodyMass <- myData$bodyMass[match(comadre$metadata$binomial,myData$binomial)]
 ```
 
@@ -72,7 +73,7 @@ bmCompData<-comparative.data(mammalTree,tempData,names.col = "binomial")
 
 Now I can fit a PGLS to estimate signal strength.
 
-```{r}
+```{r,cache=TRUE}
 model1<-pgls(log(bodyMass)~1,data = bmCompData,lambda="ML")
 summary(model1)
 plot(pgls.profile(model1))
@@ -100,7 +101,7 @@ for(i in 1:nrow(comadre$metadata)){
 }
 ```
 
-```{r,eval = TRUE, include=TRUE ,results='hide'}
+```{r,eval = TRUE, include=TRUE ,results='hide',cache=TRUE}
 hist(log(comadre$metadata$dampingRatio))
 ```
 
@@ -129,7 +130,7 @@ summary(model1)
 
 This measure has a really low signal! This means that it would be extremely difficult to infer the value based on the value of similar species.
 
-## Try the same thing for reactivity 
+## Try the same thing for reactivity {#reactivity}
 
 Reactivity is the first-timestep amplification which tells how fast a population could possibly grow (see Ezard et al.).
 
@@ -149,7 +150,7 @@ for(i in 1:nrow(comadre$metadata)){
 }
 ```
 
-```{r,eval = TRUE, include=TRUE ,results='hide'}
+```{r,eval = TRUE, include=TRUE ,results='hide',cache=TRUE}
 hist(log(comadre$metadata$react))
 ```
 
@@ -166,7 +167,7 @@ reactCompData<-comparative.data(mammalTree,tempData,names.col = "binomial")
 
 Now I can fit a PGLS model to estimate signal strength in reactivity I can also look at the likelihood surface for the lambda (signal) estimate.
  
-```{r}
+```{r,cache=TRUE}
 model1<-pgls(log(react)~1,data = reactCompData,lambda="ML")
 summary(model1)
 plot(pgls.profile(model1))
@@ -175,19 +176,4 @@ plot(pgls.profile(model1))
 This measure also has a really low signal! 
 
 The question is, are there demographic traits with high signal? Can signal be useful?
-
-## Accounting for phylogenetic signal in regular regressions
-
-```{r}
-tempData <- comadre$metadata[,c("binomial","react","bodyMass")]
-x<-tapply(tempData$react,tempData$binomial,mean)
-y<-tapply(tempData$bodyMass,tempData$binomial,mean)
-tempData<-data.frame(binomial = names(x), react= as.vector(x),bodyMass=as.vector(y))
-head(tempData)
-reactBM.CompData<-comparative.data(mammalTree,tempData,names.col = "binomial")
-model1<-pgls(log(react)~log(bodyMass),data = reactBM.CompData,lambda="ML")
-summary(model1)
-plot(pgls.profile(model1))
-plot(log(reactBM.CompData$data$bodyMass),log(reactBM.CompData$data$react))
-```
 

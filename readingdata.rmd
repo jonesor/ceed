@@ -21,7 +21,7 @@ library(caper)
 
 The most popular way of representing a tree is in a parenthetic (or "bracketed") style known as the **Newick format**. For example, the tree below was produced by the following code:
 
-```{r}
+```{r,cache=TRUE}
 tree1 <- read.tree(text="(((A,B),C),D);")
 plot(tree1)
 ```
@@ -32,7 +32,7 @@ Where there is no edge length information Newick trees are clearly straightforwa
 
 Where edge length information is also available there is the added complication of representing this information. However this is also straightforward: for Newick trees, the information is included in the bracketed text, after a colon. For example, the tree in the example below is topologically identical to the one in below but has additional edge length data:
 
-```{r}
+```{r,cache=TRUE}
 tree2 <- read.tree(text="(((A:4,B:4):3,C:7):10,D:17);")
 plot(tree2)
 ```
@@ -46,7 +46,7 @@ summary(tree2)
 
 As with other R objects, separate parts of the `phylo` object can be found by addressing them by name like this:
 
-```{r]
+```{r}
 names(tree2)
 tree2$edge
 tree2$Nnode
@@ -103,7 +103,7 @@ END;
 
 Reading this data file into R using `read.nexus` is very straightforward.
 
-```{r}
+```{r,cache=TRUE}
 nextree <- read.nexus("data/nexusexample.nex")
 summary(nextree)
 ```

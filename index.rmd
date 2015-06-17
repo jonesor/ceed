@@ -10,16 +10,8 @@ The aim of this part of the workshop is to introduce phylogenies as potential to
 
 ## Installing relevant packages {#intalling-packages}
 
-There are lots of hundreds of packages avaliable in R, and dozens focussing on phylogenetic analysis. We'll only be using a few of them, but you can install a large number in one go by using R's "task views". First you need to install a package called "ctv", then you can install all the packages that are focussing on a partiuclar area with a single command. You can find task views at: http://cran.r-project.org/web/views/. The task views for "Graphics", "Reproducible Research" might be useful. 
 
-
-```{r, eval=FALSE}
-install.packages("ctv")
-library("ctv")
-install.views("Phylogenetics")
-```
-
-If you'd rather just install a select few packages, the ones we'll be using today are `ape`, `caper`, `geiger` and `picante`. Install them in the usual way e.g. `install.packages("ape")` and load them with `library("ape")`.
+The packages used in these exercises are `ape`, `caper`, `geiger` and `picante`. Install them in the usual way e.g. `install.packages("ape")` and load them with `library("ape")`.
 
 ```{r, echo=FALSE,message=FALSE}
 library("ape")

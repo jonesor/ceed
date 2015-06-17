@@ -19,7 +19,7 @@ Once you have your tree represented as a `phylo` object in R you will probably n
 
 Taxa can be removed from the tree using `drop.tip`. For example, compare the two trees below:
 
-```{r}
+```{r,cache=TRUE}
 write.tree(mytree)
 tree2<-drop.tip(mytree,"C")
 write.tree(tree2)
@@ -29,7 +29,7 @@ You should see that `tree2a` has had the taxon called "C" removed, and that the 
 
 Groups of taxa can be removed simply by providing their names in a vector like this:
 
-```{r}
+```{r,cache=TRUE}
 tree2a<-drop.tip(tree2,c("A","C"))
 write.tree(tree2a)
 ```
@@ -39,7 +39,7 @@ write.tree(tree2a)
 Lets have a look at the carnivore tree (`CarnTree`).
 
 
-```{r, echo= TRUE}
+```{r, echo= TRUE,cache=TRUE}
 CarnTree <- read.tree(file = "data/carnivores.tre")
 plot(CarnTree, cex=0.5)
 ```
@@ -48,7 +48,7 @@ Imagine we are only interested in the relationships between the cats in this tre
 
 The first job in this case is to identify the relevant ancestral node. A quick and dirty method of doing this is to plot the tree and use the `nodelabels` command to see the node numbers. You could either print the tree to the screen, or you could produce a PDF and open it in *Preview* or *Acrobat* to view it. It may be necessary to use small labels (` ...cex=0.5)`), and zoom in on the image. 
 
-```{r}
+```{r,cache=TRUE}
 pdf("figures/Carnivores.pdf",w=15,h=15)
 plot(CarnTree, type="cladogram", cex=0.5)
 nodelabels(cex=0.5)
@@ -102,7 +102,7 @@ x[which.min(x)]
 
 One can save the tree out as either a Newick format tree or as a Nexus file.
 
-```{r}
+```{r,cache=TRUE}
 write.tree(CatTree,file="CatTree.tre")   # newick format
 write.nexus(CatTree,file="CatTree.nex")  # nexus format
 ```

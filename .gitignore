@@ -13,6 +13,11 @@ vignettes/*.html
 vignettes/*.pdf
 .Rproj.user
 
+#temp files
+temp.rmd
+temp.html
+temp.Rmd
+
 #ignore the data files
 anage_data.txt
 COMADRE_v.1.0.0.RData

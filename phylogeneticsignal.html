@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="generator" content="pandoc" />
+
+<title>Phylogenetic Signal</title>
+
+<script src="www/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="www/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
+<script src="www/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="www/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="www/bootstrap-3.3.1/shim/respond.min.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+
+</head>
+
+<body>
+
+<div class="container">
+
+
+
+<h1 id="what-is-signal">What is phylogenetic signal?</h1>
+<p>As we saw from the section on trait evolution above, even under the simplest models of evolution, closely related species will tend to resemble each other - they share similar trait values. This resemblance is termed <em>phylogenetic signal</em>. A technical definition of phylogenetic signal is that it is the statistical non-independence among species trait values due to their phylogenetic relatedness.</p>
+<p>Other terms that have been used to describe this resemblance include “inertia” and “constraint”. However, these terms are often not appropriate because they are not well-defined and are used inconsistently (for example, the terms are often used to describe a process, rather than simply a pattern). The term “signal” is preferred when we are talking simply about the pattern observed, without any connotation about the process that got us there.</p>
+<p>There are several methods for detecting and quantifying phylogenetic signal in a trait. We will first consider <em>Blomberg’s K</em>, a simple randomisation test measure, then look at a measure that uses a phylogenetic generalised least squares (PGLS) model.</p>
+<h2 id="blomberg-K">Blomberg’s K</h2>
+<p><em>Blomberg’s K</em> is a simple signal measure where the significance is estimated with a permutation test.</p>
+<p>The idea behind the measure is to ask whether the tree in question better fits a set of data than a tree where the data at the tips have been randomly permuted in order to destroy phylogenetic signal.</p>
+<p>Firstly a test statistic is calculated. This is usually variance of the phylogenetic contrasts (we’ll come onto this later, but for now think of contrasts as differences between traits). <em>If signal is strong, then related species will tend to have similar traits, and therefore the variance will be low.</em> The significance of the <span class="math">\(K\)</span> value is determined by repeatedly shuffling the data at the tips and recalculating the test statistic. The p-value can then be determined by a 1-tailed test. In other words you ask what proportion of the permutations were less than the test statistic.</p>
+<p>Although it is very easy to do this “by hand” in R, the <span class="math">\(K\)</span> value, and it’s significance, can be estimated with the <code>Kcalc</code> function of the <code>picante</code> package. The <code>phylosignal</code> function, also from <code>picante</code> is a wrapper for <code>Kcalc</code> that tests the significance of <span class="math">\(K\)</span>.</p>
+<p>We must first read in some data. It is advisable to put it into a <code>comparative.data</code> object to ensure that the tips match up correctly with the data.</p>
+<pre class="sourceCode r"><code class="sourceCode r">CatTrait &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/CatTrait.csv&quot;</span>)
+CatTrait$weight &lt;-<span class="st"> </span><span class="kw">log</span>(CatTrait$weight)
+CatData &lt;-<span class="st"> </span><span class="kw">comparative.data</span>(<span class="dt">data =</span> CatTrait, <span class="dt">phy =</span> CatTree, <span class="dt">names.col =</span> <span class="st">&quot;Species&quot;</span>,<span class="dt">na.omit=</span><span class="ot">FALSE</span>)
+
+
+<span class="kw">Kcalc</span>(CatData$data$weight,CatData$phy)
+<span class="co">#&gt; Warning in match.phylo.data(phy, x): Data set lacks taxa names, these are</span>
+<span class="co">#&gt; required to match phylogeny and data. Data are returned unsorted. Assuming</span>
+<span class="co">#&gt; that data and phy$tip.label are in the same order!</span>
+<span class="co">#&gt;          [,1]</span>
+<span class="co">#&gt; [1,] 1.193931</span>
+<span class="kw">phylosignal</span>(CatData$data$weight,CatData$phy)
+<span class="co">#&gt; Warning in match.phylo.data(phy, x): Data set lacks taxa names, these are</span>
+<span class="co">#&gt; required to match phylogeny and data. Data are returned unsorted. Assuming</span>
+<span class="co">#&gt; that data and phy$tip.label are in the same order!</span>
+<span class="co">#&gt;          K PIC.variance.obs PIC.variance.rnd.mean PIC.variance.P</span>
+<span class="co">#&gt; 1 1.193931       0.08622628             0.1790704          0.001</span>
+<span class="co">#&gt;   PIC.variance.Z</span>
+<span class="co">#&gt; 1      -3.631161</span></code></pre>
+<p>In this example, the K test statistic is highly-significant (p = 0.001).</p>
+<h2 id="lambda">Pagel’s lambda</h2>
+<p><em>If strong phylogenetic signal exists, then we would expect the structure of the phylogeny to have a large influence on the traits observed at the tip of the tree.</em> Pagel’s <span class="math">\(\lambda\)</span> statistic capitalises on this idea by checking what happens to a model that includes the phylogenetic structure, as structure is eroded.</p>
+<p>This approach uses a phylogenetic generalised least squares (PGLS) model. These are a sub-type of conventional GLS models, which are commonly used in situations where traits are correlated (e.g. spatial correlation). The way these models are fitted is analogous, but slightly different to, ordinary least squares (see Appendix). Using this approach, a PGLS regression model is fitted that correlates the trait values to the overall mean (in “R-speak”, something like <code>pgls(y~1)</code>). The “trick” is that the model also includes a variance-covariance (<span class="math">\(VCV\)</span>) matrix that also describes the phylogenetic structure. This phylogenetic structure, determined by topology and branch lengths, contributes information to the model, and should thus be considered to be another variable in the model.</p>
+<p>Pagel’s <span class="math">\(\lambda\)</span> is a transformation parameter that alters the length of the <em>internal</em> branch lengths the phylogenetic tree (Figure below). The effect of applying it is that phylogenetic structure is eroded as <span class="math">\(\lambda\)</span> is reduced from 1 towards 0. When <span class="math">\(\lambda\)</span> is equal to 0, all phylogenetic structure is removed, and all species are effectively phylogenetically independent (they are in a “star phylogeny”). When <span class="math">\(\lambda\)</span> is 1, traits covary in direct proportion to shared evolutionary history (i.e. they conform to Brownian motion). Therefore we can consider <span class="math">\(\lambda\)</span> to be a measure of the strength of signal.</p>
+<p><em>The effect of the <span class="math">\(\lambda\)</span> branch length transformation on the tree. When <span class="math">\(\lambda\)</span> is 1, the original tree is recovered, and as <span class="math">\(\lambda\)</span> is reduced towards 0, phylogenetic structure is eroded, until <span class="math">\(\lambda\)</span> = 0, when the phylogeny becomes a star phylogeny (a giant polytomy). Only internal branches are affected.</em></p>
+<p>The <span class="math">\(\lambda\)</span> value can be estimated by maximum likelihood by fitting a PGLS model, and then optimising the <span class="math">\(\lambda\)</span> transformation that is applied to the variance-covariance matrix in order to achieve the highest log-likelihood. What actually happens is that the off-diagonal elements of the variance-covariance matrix that describes the correlation structure of the are multiplied by <span class="math">\(\lambda\)</span>.</p>
+<p>Lets read in some trait data for the cats and see if there is any phylogenetic signal there. First we need to import the data with <code>read.csv</code>, then we need to combine the data with the <code>comparative.data</code> command. This is not strictly necessary, but is advisable, otherwise it becomes tricky to ensure that the traits are associated with the correct species. NOTE: the <code>pgls</code> function in <code>caper</code> subsets the data in a clumsy way. If <em>any</em> of the data in your data set are <code>NA</code>, the whole row will be omitted. Therefore, only include data you want to use!</p>
+<pre class="sourceCode r"><code class="sourceCode r">CatTrait &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;data/CatTrait.csv&quot;</span>)
+CatTrait &lt;-<span class="st"> </span>CatTrait[,<span class="dv">1</span>:<span class="dv">2</span>]
+CatTrait$weight &lt;-<span class="st"> </span><span class="kw">log</span>(CatTrait$weight)
+
+CatData &lt;-<span class="st"> </span><span class="kw">comparative.data</span>(<span class="dt">data =</span> CatTrait, <span class="dt">phy =</span> CatTree, <span class="dt">names.col =</span> <span class="st">&quot;Species&quot;</span>,<span class="dt">na.omit=</span><span class="ot">FALSE</span>)</code></pre>
+<p><code>CatData</code> now contains both the phylogeny (<code>CatData$phy</code>) and the trait data (<code>CatData$data</code>), and the data and tree tips match up correctly. We can now call this object in our phylogenetic signal estimation or regression analyses.</p>
+<p>Estimating signal strength with the <span class="math">\(\lambda\)</span> transformation is done with <code>pgls</code> function of the <code>caper</code> package as follows:</p>
+<pre class="sourceCode r"><code class="sourceCode r">sigmodel&lt;-<span class="kw">pgls</span>(weight~<span class="dv">1</span>,CatData,<span class="dt">lambda=</span><span class="st">&quot;ML&quot;</span>)
+<span class="kw">summary</span>(sigmodel)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; pgls(formula = weight ~ 1, data = CatData, lambda = &quot;ML&quot;)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residuals:</span>
+<span class="co">#&gt;      Min       1Q   Median       3Q      Max </span>
+<span class="co">#&gt; -0.70994 -0.19944 -0.03317  0.13510  0.41477 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Branch length transformations:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; kappa  [Fix]  : 1.000</span>
+<span class="co">#&gt; lambda [ ML]  : 1.000</span>
+<span class="co">#&gt;    lower bound : 0.000, p = 5.3771e-05</span>
+<span class="co">#&gt;    upper bound : 1.000, p = 1    </span>
+<span class="co">#&gt;    95.0% CI   : (0.752, NA)</span>
+<span class="co">#&gt; delta  [Fix]  : 1.000</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;             Estimate Std. Error t value  Pr(&gt;|t|)    </span>
+<span class="co">#&gt; (Intercept)  9.46906    0.53894   17.57 &lt; 2.2e-16 ***</span>
+<span class="co">#&gt; ---</span>
+<span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residual standard error: 0.2893 on 34 degrees of freedom</span>
+<span class="co">#&gt; Multiple R-squared:     0,   Adjusted R-squared:     0 </span>
+<span class="co">#&gt; F-statistic:   NaN on 0 and 34 DF,  p-value: NA</span></code></pre>
+<p>In this example, likelihood ratio tests that determine model significance have been done automatically by the <code>pgls</code> function. The lower bound indicates the p-value when the maximum likelihood estimate of <span class="math">\(\lambda\)</span> is compared to a model with a <span class="math">\(\lambda\)</span> value of 0, upper bound gives the p-value when the maximum likelihood estimate of <span class="math">\(\lambda\)</span> is compared to a model with a <span class="math">\(\lambda\)</span> value of 1. The <code>lambda [ML]</code> is the maximum likelihood estimate itself. Where possible, the 95% confidence intervals (CI) of the ML estimate are shown. However, in this case the upper value is not given (i.e. it is <code>NA</code> because the ML estimate was 1, which coincides with the upper bound of values searched when looking for the ML estimate). In situations where both upper and lower CI are <code>NA</code>, this implies that the likelihood surface is so flat that the models are not distinguishable (i.e. altering <span class="math">\(\lambda\)</span> has no significant effect on the outcome of the model).</p>
+<p>Branch lengths contain information about the evolutionary process (e.g. about the amount of time for selection and drift, and therefore for divergence, to occur).</p>
+<p>The branch lengths in the phylogeny can also be transformed in evolutionarily meaningful ways that can address particular theories (more on this later). Consider the OU model (above). When the stabilising force of selection is very strong, the trait may not diverge much at all from its ancestral value, and therefore any effects of evolutionary history could be obliterated. This extreme</p>
+<h2 id="D">Fritz and Purvis’ D</h2>
+<p>The previous two approaches are only applicable to estimating signal in continuous traits. Fritz and Purvis (2010) developed a measure they call <span class="math">\(D\)</span> that can be applied to discrete, binary, traits.</p>
+<p>If a trait is highly conserved, with only a basal division between two clades expressing either trait value, then the only change will be along the two daughters at the root. This will give a summed value of 1: the two differences between the root nodal value of 0.5 and the ancestors of the 1 and 0 clades. In contrast, if the trait is labile, more differences will be observed and the sum will be higher.</p>
+<p>The <code>phylo.d</code> function in the <code>caper</code> package calculates D, and compares the observed value with D values obtained from models where trait values are shuffled randomly among the tips (phylogenetic randomness) and a Brownian motion threshold model (where a continuous trait is evolved along a tree, and then a threshold applied that would result in the observed trait prevalence).</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(BritishBirds)
+BritishBirds &lt;-<span class="st"> </span><span class="kw">comparative.data</span>(BritishBirds.tree, BritishBirds.data, binomial)
+redPhyloD &lt;-<span class="st"> </span><span class="kw">phylo.d</span>(BritishBirds, <span class="dt">binvar=</span>Red_list)
+<span class="kw">print</span>(redPhyloD)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Calculation of D statistic for the phylogenetic structure of a binary variable</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   Data :  BritishBirds.data</span>
+<span class="co">#&gt;   Binary variable :  Red_list</span>
+<span class="co">#&gt;   Counts of states:  0 = 149</span>
+<span class="co">#&gt;                      1 = 32</span>
+<span class="co">#&gt;   Phylogeny :  BritishBirds.tree</span>
+<span class="co">#&gt;   Number of permutations :  1000</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Estimated D :  0.5610536</span>
+<span class="co">#&gt; Probability of E(D) resulting from no (random) phylogenetic structure :  0</span>
+<span class="co">#&gt; Probability of E(D) resulting from Brownian phylogenetic structure    :  0.018</span></code></pre>
+<h2 id="controlling-for-signal">What do we mean when we control for phylogenetic signal?</h2>
+<p>As we have already seen, the tree-like structure in the relationships between species mean that all species are related. The degree of relatedness is continuous: some species are closely related, others are distantly related, and still more are somewhere in between. Technically, this relatedness is a special form of <strong>autocorrelation</strong> and, like other forms of autocorrelation, it means that data on species traits cannot be considered to be independent. In a <code>pgls</code>, as used to estimate phylogenetic signal, the variance-covariance matrix describes this relationship.</p>
+<p>A failure to account for these phylogenetic relationships can lead to situations where apparently strong relationships rest on few independent events (Figure below), or where strong relationships within groups are masked by the phylogenetic differences between groups (Figure below).</p>
+<p>Since statistical independence is an underlying assumption of many statistical methods, it will come as no surprise that there are a number of methods available to deal with this. We will cover two of these methods - the phylogenetic generalised least squares method and Felsenstein’s (1985) independent contrasts method.</p>
+<p><em>Phylogenetic autocorrelation. (a) The ordinary least squares (ols) regression (solid line) implies a strong relationship between the two traits. However, the relationship within the individual clades is far from strong. The relationship simply reflects a change in the mean value between clades. (b) The ols regression shows a fairly weak relationship between the two traits. However, within the clades the relationships are strongly positive. (Reproduced from Orme et al. 2011)</em></p>
+<h2 id="pgls">Phylogenetic Generalised Least Squares (pgls)</h2>
+<p>As already described, phylogenetic generalised least squares models (pgls) can be fit using the <code>pgls</code> function, from the <code>caper</code> package in R. The branch length transformation that is applied is part of the model. It makes particular assumptions about how evolution has proceeded. One of the questions we must ask is whether the transformation chosen (and the parameter value of the transformation) is appropriate. We will address these questions in the following few examples. Using a PGLS model has the advantage of allowing the simultaneous estimation of signal <em>and</em> the fitting of a phylogenetically corrected regression model.</p>
+<p>Again, the function requires a <em>comparative data object</em> which includes both a data set and a phyogeny (created using the <code>comparative.data</code> function). We already created a comparative data object called <code>CatData</code> elsewhere.</p>
+<pre class="sourceCode r"><code class="sourceCode r">CatTrait &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;CatTrait.csv&quot;</span>)
+
+CatTrait &lt;-<span class="st"> </span>CatTrait[,<span class="kw">names</span>(CatTrait)%in%<span class="kw">c</span>(<span class="st">&quot;Species&quot;</span>,<span class="st">&quot;weight&quot;</span>,<span class="st">&quot;longevity&quot;</span>)]
+CatTrait$weight &lt;-<span class="st"> </span><span class="kw">log</span>(CatTrait$weight)
+
+CatData &lt;-<span class="st"> </span><span class="kw">comparative.data</span>(<span class="dt">data =</span> CatTrait, <span class="dt">phy =</span> CatTree, <span class="dt">names.col =</span> <span class="st">&quot;Species&quot;</span>,<span class="dt">na.omit=</span><span class="ot">FALSE</span>)
+
+model1 &lt;-<span class="st"> </span><span class="kw">pgls</span>(<span class="kw">log</span>(longevity) ~<span class="st"> </span><span class="kw">log</span>(weight), CatData)
+<span class="kw">print</span>(model1)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; pgls(formula = log(longevity) ~ log(weight), data = CatData)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt; (Intercept)  log(weight)  </span>
+<span class="co">#&gt;      1.4886       0.6746</span>
+<span class="kw">summary</span>(model1)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; pgls(formula = log(longevity) ~ log(weight), data = CatData)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residuals:</span>
+<span class="co">#&gt;       Min        1Q    Median        3Q       Max </span>
+<span class="co">#&gt; -0.102780 -0.026368  0.008218  0.035202  0.091284 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Branch length transformations:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; kappa  [Fix]  : 1.000</span>
+<span class="co">#&gt; lambda [Fix]  : 1.000</span>
+<span class="co">#&gt; delta  [Fix]  : 1.000</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;             Estimate Std. Error t value Pr(&gt;|t|)  </span>
+<span class="co">#&gt; (Intercept)  1.48856    0.66266  2.2464  0.03340 *</span>
+<span class="co">#&gt; log(weight)  0.67461    0.29228  2.3081  0.02921 *</span>
+<span class="co">#&gt; ---</span>
+<span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residual standard error: 0.0468 on 26 degrees of freedom</span>
+<span class="co">#&gt;   (7 observations deleted due to missingness)</span>
+<span class="co">#&gt; Multiple R-squared: 0.1701,  Adjusted R-squared: 0.1381 </span>
+<span class="co">#&gt; F-statistic: 5.327 on 1 and 26 DF,  p-value: 0.02921</span></code></pre>
+<p>Besides Pagel’s <span class="math">\(\lambda\)</span>, which was mentioned above, other, biologically-informed transformations exist, and different modes of evolution can be investigated by checking the fits of models with various evolutionarily meaningful transformations.</p>
+<p>Pagel’s delta (<span class="math">\(\delta\)</span>) transformation is a model of evolution where rates of trait change increase or decrease through time. Values of delta &lt; 1 transform branch lengths to be increasingly shorter towards the tips, describing a model in which trait change occurs rapidly early in the history of a clade and then slows through time. Models with delta &gt; 1 describe an increasing rate of character evolution through time, while delta = 0 is identical to a Brownian motion model. This is therefore akin to Early Burst model.</p>
+<p>Pagel’s kappa (<span class="math">\(\kappa\)</span>) transformation model raises branch lengths to the power of kappa. A punctuational model is specified when kappa = 0 and all branch lengths are equal. Again, the model reduces to Brownian Motion when kappa = 1. Values of kappa between 0 and 1 tend to shorten long branch lengths more than short ones, describing a model of saturating evolution (i.e. radiation into a finite number of niches). This should not be confused with <em>Blomberg’s K</em>!</p>
+<p>The above example fits a gls model with an untransformed variance-covariance matrix. Therefore, the <span class="math">\(\lambda\)</span>, <span class="math">\(\delta\)</span> and <span class="math">\(\kappa\)</span> parameters are all fixed to be 1, which is equivalent to a fully independent contrast model. It is straightforward to optimise the branch lengths by maximum likelihood by setting the values to be <code>&quot;ML&quot;</code>. Alternatively, the parameter values can specified. For example, we could fit the equivalent of an ordinary least squares regression by specifying <code>lambda=0</code> (however, note that the lower bound of the optimisation algorithm are set to 1e-6, so you would need to change these to 0, as in the example below). The outcome of such transformations are illustrated in the following figure.</p>
+<pre class="sourceCode r"><code class="sourceCode r">model2 &lt;-<span class="st"> </span><span class="kw">pgls</span>(<span class="kw">log</span>(longevity) ~<span class="st"> </span><span class="kw">log</span>(weight), CatData, <span class="dt">lambda=</span><span class="st">&quot;ML&quot;</span>)
+
+<span class="kw">summary</span>(model2)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; pgls(formula = log(longevity) ~ log(weight), data = CatData, </span>
+<span class="co">#&gt;     lambda = &quot;ML&quot;)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residuals:</span>
+<span class="co">#&gt;       Min        1Q    Median        3Q       Max </span>
+<span class="co">#&gt; -0.102780 -0.026368  0.008218  0.035202  0.091284 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Branch length transformations:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; kappa  [Fix]  : 1.000</span>
+<span class="co">#&gt; lambda [ ML]  : 1.000</span>
+<span class="co">#&gt;    lower bound : 0.000, p = 0.0075463</span>
+<span class="co">#&gt;    upper bound : 1.000, p = 1    </span>
+<span class="co">#&gt;    95.0% CI   : (0.360, NA)</span>
+<span class="co">#&gt; delta  [Fix]  : 1.000</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;             Estimate Std. Error t value Pr(&gt;|t|)  </span>
+<span class="co">#&gt; (Intercept)  1.48856    0.66266  2.2464  0.03340 *</span>
+<span class="co">#&gt; log(weight)  0.67461    0.29228  2.3081  0.02921 *</span>
+<span class="co">#&gt; ---</span>
+<span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residual standard error: 0.0468 on 26 degrees of freedom</span>
+<span class="co">#&gt;   (7 observations deleted due to missingness)</span>
+<span class="co">#&gt; Multiple R-squared: 0.1701,  Adjusted R-squared: 0.1381 </span>
+<span class="co">#&gt; F-statistic: 5.327 on 1 and 26 DF,  p-value: 0.02921</span></code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="kw">log</span>(CatData$data$weight),<span class="kw">log</span>(CatData$data$longevity),<span class="dt">xlab=</span><span class="st">&quot;log(weight)&quot;</span>,<span class="dt">ylab=</span><span class="st">&quot;log(longevity)&quot;</span>)
+<span class="kw">abline</span>(model1,<span class="dt">lty=</span><span class="dv">1</span>)
+<span class="kw">abline</span>(model2,<span class="dt">lty=</span><span class="dv">1</span>,<span class="dt">lwd=</span><span class="dv">2</span>)
+
+model3 &lt;-<span class="st"> </span><span class="kw">pgls</span>(<span class="kw">log</span>(longevity) ~<span class="st"> </span><span class="kw">log</span>(weight), CatData, <span class="dt">lambda=</span><span class="dv">0</span>,<span class="dt">bounds =</span> <span class="kw">list</span>(<span class="dt">lambda=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="dt">kappa=</span><span class="kw">c</span>(<span class="fl">1e-6</span>,<span class="dv">3</span>), <span class="dt">delta=</span><span class="kw">c</span>(<span class="fl">1e-6</span>,<span class="dv">3</span>)))
+<span class="kw">abline</span>(model3,<span class="dt">lty=</span><span class="dv">2</span>)
+
+<span class="kw">legend</span>(<span class="st">&quot;bottomright&quot;</span>,<span class="dt">legend=</span><span class="kw">c</span>(<span class="st">&quot;lambda = 1&quot;</span>,<span class="st">&quot;optimised lambda&quot;</span>,<span class="st">&quot;lambda = 0&quot;</span>),<span class="dt">lty=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>),<span class="dt">lwd=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>))</code></pre>
+<p><img src="figures/unnamed-chunk-11-1.png" title="" alt="" width="384" /> <em>This figure shows regression models for different values of <span class="math">\(\lambda\)</span>. In this case, the phylogeny does not make a big difference.</em></p>
+<p>Other, biologically-informed transformations exist, and different modes of evolution can be investigated by checking the fits of models with various evolutionarily meaningful transformations.</p>
+<p>Pagel’s delta (<span class="math">\(\delta\)</span>) transformation is a model of evolution where rates of trait change increase or decrease through time. Values of delta &lt; 1 transform branch lengths to be increasingly shorter towards the tips, describing a model in which trait change occurs rapidly early in the history of a clade and then slows through time. Models with delta &gt; 1 describe an increasing rate of character evolution through time, while delta = 0 is identical to a Brownian motion model. This is therefore akin to Early Burst model.</p>
+<p>Pagel’s kappa (<span class="math">\(\kappa\)</span>) transformation model raises branch lengths to the power of kappa. A punctuational model is specified when kappa = 0 and all branch lengths are equal. Again, the model reduces to Brownian Motion when kappa = 1. Values of kappa between 0 and 1 tend to shorten long branch lengths more than short ones, describing a model of saturating evolution (i.e. radiation into a finite number of niches). This should not be confused with Blomberg’s K!</p>
+<p>We can look at a likelihood surfaces of the various branch transformation parameters using the <code>pgls.profile</code> function (Figure below). Note that the <span class="math">\(\kappa\)</span> transformation requires a 3 dimensional array rather than a simple 2-dimensional variance-covariance matrix. This is achieved with the  argument in the  function that you would have used when you created the data object.</p>
+<pre class="sourceCode r"><code class="sourceCode r">CatData &lt;-<span class="st"> </span><span class="kw">comparative.data</span>(<span class="dt">data =</span> CatTrait, <span class="dt">phy =</span> CatTree, <span class="dt">names.col =</span> <span class="st">&quot;Species&quot;</span>,<span class="dt">na.omit=</span><span class="ot">FALSE</span>,<span class="dt">vcv=</span><span class="ot">TRUE</span>, <span class="dt">vcv.dim=</span><span class="dv">3</span>)
+model2 &lt;-<span class="st"> </span><span class="kw">pgls</span>(<span class="kw">log</span>(longevity) ~<span class="st"> </span><span class="kw">log</span>(weight), CatData, <span class="dt">lambda=</span><span class="st">&quot;ML&quot;</span>)
+
+<span class="kw">summary</span>(model2)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; pgls(formula = log(longevity) ~ log(weight), data = CatData, </span>
+<span class="co">#&gt;     lambda = &quot;ML&quot;)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residuals:</span>
+<span class="co">#&gt;      Min       1Q   Median       3Q      Max </span>
+<span class="co">#&gt; -0.09969 -0.01576  0.01550  0.03847  0.07466 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Branch length transformations:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; kappa  [Fix]  : 1.000</span>
+<span class="co">#&gt; lambda [ ML]  : 1.000</span>
+<span class="co">#&gt;    lower bound : 0.000, p = 0.0077244</span>
+<span class="co">#&gt;    upper bound : 1.000, p = 1    </span>
+<span class="co">#&gt;    95.0% CI   : (0.358, NA)</span>
+<span class="co">#&gt; delta  [Fix]  : 1.000</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;             Estimate Std. Error t value Pr(&gt;|t|)  </span>
+<span class="co">#&gt; (Intercept)  1.49807    0.68491  2.1872  0.03791 *</span>
+<span class="co">#&gt; log(weight)  0.66870    0.30613  2.1844  0.03814 *</span>
+<span class="co">#&gt; ---</span>
+<span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residual standard error: 0.04683 on 26 degrees of freedom</span>
+<span class="co">#&gt;   (7 observations deleted due to missingness)</span>
+<span class="co">#&gt; Multiple R-squared: 0.1666,  Adjusted R-squared: 0.1345 </span>
+<span class="co">#&gt; F-statistic: 5.196 on 1 and 26 DF,  p-value: 0.03108</span>
+
+mod2.lambda &lt;-<span class="st"> </span><span class="kw">pgls.profile</span>(model2, <span class="st">&quot;lambda&quot;</span>)
+mod2.delta &lt;-<span class="st"> </span><span class="kw">pgls.profile</span>(model2, <span class="st">&quot;delta&quot;</span>)
+mod2.kappa &lt;-<span class="st"> </span><span class="kw">pgls.profile</span>(model2, <span class="st">&quot;kappa&quot;</span>)
+<span class="kw">plot</span>(mod2.lambda)</code></pre>
+<p><img src="figures/unnamed-chunk-12-1.png" title="" alt="" width="384" /></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(mod2.delta)</code></pre>
+<p><img src="figures/unnamed-chunk-12-2.png" title="" alt="" width="384" /></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(mod2.kappa)</code></pre>
+<p><img src="figures/unnamed-chunk-12-3.png" title="" alt="" width="384" /></p>
+<p><img src="figures/unnamed-chunk-13-1.png" title="" alt="" width="384" /> <em>Likelihood surfaces of <span class="math">\(\lambda\)</span>, <span class="math">\(\delta\)</span> and <span class="math">\(\kappa\)</span> for model1.</em></p>
+<h2 id="model-criticism">Model criticism in PGLS</h2>
+<p>Like other model objects in R, PGLS models can be examined using <code>plot(model)</code>. This is best done in a 2x2 plot, using <code>par(mfrow=c(2,2))</code>. In this layout (Figure below), the top two plots are a density plot of the residuals, and a normal Q-Q plot, which shows the distribution of the residuals vs. their expected theoretical distribution. The bottom two plots show the fitted values against the residuals, and against the observed values, so we can check for pattern in the residuals of the model</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))
+<span class="kw">plot</span>(model2)</code></pre>
+<p><img src="figures/unnamed-chunk-14-1.png" title="" alt="" width="384" /> <em>Diagnostic plots of model2, from above.</em></p>
+<p>In addition, models can be compared using <code>anova</code> and <code>logLik</code>. It is also possible to obtain the <code>AIC</code> score.</p>
+<p>Therefore, it is possible to test and compare a range of models.</p>
+<pre class="sourceCode r"><code class="sourceCode r">CatData &lt;-<span class="st"> </span><span class="kw">comparative.data</span>(<span class="dt">data =</span> CatTrait, <span class="dt">phy =</span> CatTree, <span class="dt">names.col =</span> <span class="st">&quot;Species&quot;</span>,<span class="dt">na.omit=</span><span class="ot">FALSE</span>,<span class="dt">vcv=</span><span class="ot">TRUE</span>, <span class="dt">vcv.dim=</span><span class="dv">3</span>)
+model1 &lt;-<span class="st"> </span><span class="kw">pgls</span>(<span class="kw">log</span>(longevity) ~<span class="st"> </span><span class="kw">log</span>(weight), CatData, <span class="dt">lambda=</span><span class="st">&quot;ML&quot;</span>)
+model2 &lt;-<span class="st"> </span><span class="kw">pgls</span>(<span class="kw">log</span>(longevity) ~<span class="dv">1</span>, CatData, <span class="dt">lambda=</span><span class="st">&quot;ML&quot;</span>)
+
+<span class="kw">AIC</span>(model1,model2)
+<span class="co">#&gt;        df       AIC</span>
+<span class="co">#&gt; model1  2 -20.32418</span>
+<span class="co">#&gt; model2  1 -17.22253</span></code></pre>
+<h2 id="indpendent-contrasts">Independent Contrasts</h2>
+<p>The independent contrasts method is a little bit of a dated method now, but since it is still used a fair amount I will explain how it works. You may also see this method in the literature termed Phylogenetically Independent Constrasts (PIC), or Comparative Analysis with Independent Contrasts (CAIC). Often, contrasts are standardised by division by the square root of the sum of its branch lengths (this is the standard deviation, assuming a Brownian motion mode of evolution).</p>
+<p>In the <code>caper</code> library, the two main functions for fitting PIC models are <code>brunch</code> and <code>crunch</code> which are for categorical and continuous variables respectively.</p>
+<p>First we’ll fit a model with <code>crunch</code>. Crunch cannot handle zero length branches, so we first need to add a small value to the edge that has a length of zero. Furthermore, unlike with normal regression models, transformations must be carried out <em>before</em> model fitting. This is because of the way that contrasts are calculated in R. If we were to specify a transformation within the model, it would be applied to the contrast, rather than the value at the tip. This is obviously much harder to interpret!</p>
+<pre class="sourceCode r"><code class="sourceCode r">CatData$phy$edge.length[<span class="kw">which</span>(CatData$phy$edge.length==<span class="dv">0</span>)] &lt;-<span class="st"> </span><span class="fl">0.001</span>
+CatData$data$loglongevity &lt;-<span class="st"> </span><span class="kw">log</span>(CatData$data$longevity)
+CatData$data$logweight &lt;-<span class="st"> </span><span class="kw">log</span>(CatData$data$weight)
+crunchmod1 &lt;-<span class="st"> </span><span class="kw">crunch</span>(loglongevity ~<span class="st"> </span>logweight, CatData)
+<span class="kw">summary</span>(crunchmod1)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; lm(loglongevity ~ logweight - 1, data = contrData)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residuals:</span>
+<span class="co">#&gt;       Min        1Q    Median        3Q       Max </span>
+<span class="co">#&gt; -0.077459 -0.030141  0.000122  0.036081  0.084285 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;           Estimate Std. Error t value Pr(&gt;|t|)  </span>
+<span class="co">#&gt; logweight   0.6746     0.2923   2.308   0.0292 *</span>
+<span class="co">#&gt; ---</span>
+<span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residual standard error: 0.0468 on 26 degrees of freedom</span>
+<span class="co">#&gt; Multiple R-squared:  0.1701, Adjusted R-squared:  0.1381 </span>
+<span class="co">#&gt; F-statistic: 5.327 on 1 and 26 DF,  p-value: 0.02921</span></code></pre>
+<p>Note that the estimates provided by this method are almost identical to those produced by the PGLS model with a <span class="math">\(\lambda\)</span> value of 1.</p>
+<p>It is also possible to fit the same kind of model using <code>pic</code>, from the <code>ape</code> package. This function computes the phylogenetically independent contrasts directly, and the regression model can be fitted using <code>lm</code>. Below I extract the relevant data from <code>CatData</code>, drop the tips where we have no data, calculate the contrasts and fit a linear model. You will observe that the model is exactly the same as for crunch, although it is trickier to prepare the data. The best advice is probably to use <code>crunch</code>!</p>
+<p>Note, for statistical reasons that I won’t get into, the regression should be fit through the origin (see Garland et al. (1992)).</p>
+<pre class="sourceCode r"><code class="sourceCode r">picdata &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">loglongevity =</span> CatData$data$loglongevity,<span class="dt">logweight=</span>CatData$data$logweight)
+<span class="kw">row.names</span>(picdata) &lt;-<span class="st"> </span><span class="kw">row.names</span>(CatData$data)
+
+new.phy &lt;-<span class="st"> </span><span class="kw">drop.tip</span>(CatData$phy,<span class="kw">row.names</span>(picdata)[<span class="kw">is.na</span>(picdata$loglongevity)])
+picdata &lt;-<span class="st"> </span><span class="kw">na.omit</span>(picdata)
+
+pic.y &lt;-<span class="st"> </span><span class="kw">pic</span>(picdata$loglongevity,new.phy) 
+pic.x &lt;-<span class="st"> </span><span class="kw">pic</span>(picdata$logweight,new.phy)
+
+picmodel&lt;-<span class="kw">lm</span>(pic.y~pic.x<span class="dv">-1</span>)
+<span class="kw">summary</span>(picmodel)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; lm(formula = pic.y ~ pic.x - 1)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residuals:</span>
+<span class="co">#&gt;       Min        1Q    Median        3Q       Max </span>
+<span class="co">#&gt; -0.077459 -0.038925 -0.000122  0.028375  0.084285 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;       Estimate Std. Error t value Pr(&gt;|t|)  </span>
+<span class="co">#&gt; pic.x   0.6746     0.2923   2.308   0.0292 *</span>
+<span class="co">#&gt; ---</span>
+<span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residual standard error: 0.0468 on 26 degrees of freedom</span>
+<span class="co">#&gt; Multiple R-squared:  0.1701, Adjusted R-squared:  0.1381 </span>
+<span class="co">#&gt; F-statistic: 5.327 on 1 and 26 DF,  p-value: 0.02921</span></code></pre>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="generator" content="pandoc" />
+
+<title>Welcome</title>
+
+<script src="www/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="www/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
+<script src="www/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="www/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="www/bootstrap-3.3.1/shim/respond.min.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+
+</head>
+
+<body>
+
+<div class="container">
+
+
+
+<h2 id="welcome">Welcome</h2>
+<p>The aim of this part of the workshop is to introduce phylogenies as potential tools for conservation. We’ll first examine what phylogenies are (what do they describe? how do we “read” them?), then we’ll check out how to read them into R, and manipulate them as data objects (e.g. how to subset them, plot different parts, join them to useful data etc.)</p>
+<h2 id="intalling-packages">Installing relevant packages</h2>
+<p>There are lots of hundreds of packages avaliable in R, and dozens focussing on phylogenetic analysis. We’ll only be using a few of them, but you can install a large number in one go by using R’s “task views”. First you need to install a package called “ctv”, then you can install all the packages that are focussing on a partiuclar area with a single command. You can find task views at: <a href="http://cran.r-project.org/web/views/" class="uri">http://cran.r-project.org/web/views/</a>. The task views for “Graphics”, “Reproducible Research” might be useful.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;ctv&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;ctv&quot;</span>)
+<span class="kw">install.views</span>(<span class="st">&quot;Phylogenetics&quot;</span>)</code></pre>
+<p>If you’d rather just install a select few packages, the ones we’ll be using today are <code>ape</code>, <code>caper</code>, <code>geiger</code> and <code>picante</code>. Install them in the usual way e.g. <code>install.packages(&quot;ape&quot;)</code> and load them with <code>library(&quot;ape&quot;)</code>.</p>
+<h4>Contents</h4>
+<ul class="toc">
+{% include ceed-nav.html %}
+</ul>
+<h2>Some useful references</h2>
+<p>Blomberg, S., Garland, T., &amp; Ives, A. (2003). Testing for phylogenetic signal in comparative data: Behavioral traits are more labile. Evolution, 57(4), 717-745. [Deals with Blomberg’s K.]</p>
+<p>Cooper, N., &amp; Purvis, A. (2010). Body Size Evolution in Mammals: Complexity in Tempo and Mode. The American Naturalist, 175(6), 727-738. [Testing different models of evolution.]</p>
+<p>Felsenstein, J. (1985). Phylogenies and the Comparative Method. The American Naturalist, 125(1), 1-15. The University of Chicago Press.</p>
+<p>Freckleton, R. P., Harvey, P., &amp; Pagel, M. (2002). Phylogenetic analysis and comparative data: A test and review of evidence. The American Naturalist, 160(6), 712-726. [pgls models]</p>
+<p>Freckleton, R. P. (2009). The seven deadly sins of comparative analysis. Journal Of Evolutionary Biology, 22(7), 1367-1375. [General overview]</p>
+<p>Garland, T., Harvey, P., &amp; Ives, A. (1992). Procedures for the Analysis of Comparative Data Using Phylogenetically Independent Contrasts. Systematic Biology, 41(1), 18-32.</p>
+<p>Pagel, M. (1999). Inferring the historical patterns of biological evolution. Nature, 401(6756), 877-884. [Deals with lambda, delta, and kappa branch length transformations]</p>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+#NEXUS
+[R-package APE, Wed Jun 17 17:38:35 2015]
+
+BEGIN TAXA;
+	DIMENSIONS NTAX = 35;
+	TAXLABELS
+		Panthera_leo
+		Panthera_pardus
+		Panthera_onca
+		Panthera_tigris
+		Uncia_uncia
+		Neofelis_nebulosa
+		Pardofelis_marmorata
+		Lynx_canadensis
+		Lynx_lynx
+		Lynx_pardinus
+		Lynx_rufus
+		Catopuma_badia
+		Catopuma_temminckii
+		Profelis_aurata
+		Leopardus_tigrinus
+		Oncifelis_guigna
+		Oncifelis_geoffroyi
+		Oncifelis_colocolo
+		Oreailurus_jacobita
+		Leopardus_pardalis
+		Leopardus_wiedii
+		Felis_margarita
+		Felis_nigripes
+		Felis_silvestris
+		Felis_bieti
+		Felis_chaus
+		Caracal_caracal
+		Leptailurus_serval
+		Prionailurus_bengalensis
+		Prionailurus_viverrinus
+		Prionailurus_rubiginosus
+		Prionailurus_planiceps
+		Herpailurus_yaguarondi
+		Puma_concolor
+		Acinonyx_jubatus
+	;
+END;
+BEGIN TREES;
+	TRANSLATE
+		1	Panthera_leo,
+		2	Panthera_pardus,
+		3	Panthera_onca,
+		4	Panthera_tigris,
+		5	Uncia_uncia,
+		6	Neofelis_nebulosa,
+		7	Pardofelis_marmorata,
+		8	Lynx_canadensis,
+		9	Lynx_lynx,
+		10	Lynx_pardinus,
+		11	Lynx_rufus,
+		12	Catopuma_badia,
+		13	Catopuma_temminckii,
+		14	Profelis_aurata,
+		15	Leopardus_tigrinus,
+		16	Oncifelis_guigna,
+		17	Oncifelis_geoffroyi,
+		18	Oncifelis_colocolo,
+		19	Oreailurus_jacobita,
+		20	Leopardus_pardalis,
+		21	Leopardus_wiedii,
+		22	Felis_margarita,
+		23	Felis_nigripes,
+		24	Felis_silvestris,
+		25	Felis_bieti,
+		26	Felis_chaus,
+		27	Caracal_caracal,
+		28	Leptailurus_serval,
+		29	Prionailurus_bengalensis,
+		30	Prionailurus_viverrinus,
+		31	Prionailurus_rubiginosus,
+		32	Prionailurus_planiceps,
+		33	Herpailurus_yaguarondi,
+		34	Puma_concolor,
+		35	Acinonyx_jubatus
+	;
+	TREE * UNTITLED = [&R] (((((((((((((1:6.2,2:6.2):0.1,3:6.3):0.1,4:6.4):0.2,5:6.6):2.1,6:8.7):0.1,7:8.8):2.9,(((8:3.8,9:3.8):2,10:5.8):3.7,11:9.5):2.2):0.2,((12:7.4,13:7.4):0.9,14:8.3):3.6):0.1,((((15:8.6,16:8.6):0,17:8.6):0.2,(18:3.3,19:3.3):5.5):1.8,(20:6.9,21:6.9):3.7):1.4):0.1,(((((22:5.4,23:5.4):0.4,24:5.8):1.1,(25:3.1,26:3.1):3.8):3,27:9.9):0.2,28:10.1):2):4.5,(((29:9.6,30:9.6):0.2,31:9.8):3.3,32:13.1):3.5):0.2,(33:13.9,34:13.9):2.9):1.7,35:18.5);
+END;

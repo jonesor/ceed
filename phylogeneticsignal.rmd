@@ -132,7 +132,7 @@ A failure to account for these phylogenetic relationships can lead to situations
 
 Since statistical independence is an underlying assumption of many statistical methods, it will come as no surprise that there are a number of methods available to deal with this. We will cover two of these methods -  the phylogenetic generalised least squares method and Felsenstein's (1985) independent contrasts method.
 
-```{r, echo = FALSE,eval=TRUE}
+```{r phyloautocorr, echo = FALSE,eval=TRUE}
 #This code taken from Caper package by Dave Orme
 par(mfrow=c(2,2), mar=c(3,3,1,1), mgp=c(2,0.7,0))
 
@@ -218,7 +218,7 @@ summary(model2)
 
 
 
-```{r}
+```{r phyloregression}
 plot(log(CatData$data$weight),log(CatData$data$longevity),xlab="log(weight)",ylab="log(longevity)")
 abline(model1,lty=1)
 abline(model2,lty=1,lwd=2)
@@ -238,7 +238,7 @@ Pagel's kappa ($\kappa$) transformation model raises branch lengths to the power
 
 We can look at a likelihood surfaces of the various branch transformation parameters using the `pgls.profile` function (Figure below). Note that the $\kappa$ transformation requires a 3 dimensional array rather than a simple 2-dimensional variance-covariance matrix. This is achieved with the \verb@vcv.dim@ argument in the \verb@comparative.data@ function that you would have used when you created the data object.
 
-```{r}
+```{r pglsprofiles}
 CatData <- comparative.data(data = CatTrait, phy = CatTree, names.col = "Species",na.omit=FALSE,vcv=TRUE, vcv.dim=3)
 model2 <- pgls(log(longevity) ~ log(weight), CatData, lambda="ML")
 
@@ -252,7 +252,7 @@ plot(mod2.delta)
 plot(mod2.kappa)
 ```
 
-```{r, echo=FALSE}
+```{r likelihoodsurf, echo=FALSE}
 par(mar=c(4.5,3,1,1), mfrow=c(1,3), mgp=c(1.8,0.8,0), tcl=-0.2)
 plot(mod2.lambda)
 plot(mod2.delta)
@@ -267,7 +267,7 @@ Like other model objects in R, PGLS models can be examined using `plot(model)`.
 This is best done in a 2x2 plot, using `par(mfrow=c(2,2))`. In this layout (Figure below), the top two plots are a density plot of the residuals, and a normal Q-Q plot, which shows the distribution of the residuals vs. their expected theoretical distribution. The bottom two plots show the fitted values against the residuals, and against the observed values, so we can check for pattern in the residuals of the model
 
 
-```{r}
+```{r diagnosticsModel2}
 par(mfrow=c(2,2))
 plot(model2)
 ```

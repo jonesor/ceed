@@ -29,7 +29,7 @@ Ideally phylogenies will be strictly *dichotomous* (i.e. each internal node repr
 The phylogeny is typically constructed using genetic data (e.g., from sequence data), or with morphological data, or a combination of both. Node ages are often deduced using a molecular clock method, which may be calibrated using fossil data. Sometimes the topology of the tree can be altered or constrained with ``expert opinion''. It is not uncommon to find several plausible trees for the same groups of species and, in the case of Bayesian tree construction methods, there may be many dozens of equally plausible posterior trees.  These approaches are outside the scope of this workshop, but suffice to say, the phylogeny is itself a model, and, like any model, is almost certainly incorrect! 
 
 
-```{r,echo=FALSE, cache=TRUE}
+```{r treeparts,echo=FALSE, cache=FALSE}
 plot(read.tree(text="(((A,B),C),D);"),lwd=3,col="black")
 nodelabels(node=6,pch=16,cex=2)
 
@@ -53,7 +53,7 @@ text(2.475, 2.1, "A clade with 2 sp.", font = 2,pos=3)
 So, in the following phylogeny you can see that A and B are more closely related to eachother than A is to C.
 
 
-```{r, echo=FALSE,cache=TRUE}
+```{r simpletree, echo=FALSE,cache=TRUE}
 tree1<-read.tree(text = "((A,B),C);")
 plot(tree1)
 ```
@@ -70,7 +70,7 @@ Evolutionary biologists have produced a number of models that characterise the e
 
 When conducting phylogenetic analyses, it is a good idea to bear in mind that you are assuming a model of trait evolution, and that your assumptions may not be incorrect. Furthermore, an often overlooked point, is that phylogenetic signal will arise even with a stochastic model (e.g. Brownian motion model), and some mode of evolution can act to obscure signal.
 
-```{r, echo=FALSE,cache=TRUE}
+```{r evolutionsims, echo=FALSE,cache=TRUE}
 
 nsim=50
 time.steps = 50

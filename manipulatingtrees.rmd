@@ -39,7 +39,7 @@ write.tree(tree2a)
 Lets have a look at the carnivore tree (`CarnTree`).
 
 
-```{r carntree, echo= TRUE,cache=TRUE}
+```{r, echo= TRUE,cache=TRUE}
 CarnTree <- read.tree(file = "data/carnivores.tre")
 plot(CarnTree, cex=0.5)
 ```
@@ -48,7 +48,7 @@ Imagine we are only interested in the relationships between the cats in this tre
 
 The first job in this case is to identify the relevant ancestral node. A quick and dirty method of doing this is to plot the tree and use the `nodelabels` command to see the node numbers. You could either print the tree to the screen, or you could produce a PDF and open it in *Preview* or *Acrobat* to view it. It may be necessary to use small labels (` ...cex=0.5)`), and zoom in on the image. 
 
-```{r nodelabels,cache=TRUE}
+```{r ,cache=TRUE}
 plot(CarnTree, type="cladogram", cex=0.5)
 nodelabels(cex=0.5)
 ```
@@ -97,6 +97,116 @@ x[which.min(x)]
 ```
 
 ## Saving your trees {#saving-trees}
+
+One can save the tree out as either a Newick format tree or as a Nexus file.
+
+```{r,eval=FALSE}
+write.tree(CatTree,file="CatTree.tre")   # newick format
+write.nexus(CatTree,file="CatTree.nex")  # nexus format
+```
+
+You can also output multiple trees in a single file. This can be very useful if, for example, you have several plausible trees. 
+To write out several Newick format trees they must first be concatenated into a `multiPhylo` list object using `c.phylo()`. 
+
+```{r,eval=FALSE}
+write.tree(c.phylo(CatTree,CarnTree),file="MyTrees.tre")
+```
+
+
+```{r, echo=FALSE, eval=TRUE,results='hide',include=FALSE}
+library(ape)
+library(caper)
+mytree<-read.tree(text="(((A,B),C),D);")
+#plot(read.tree(text="(((A:1,B:1):1,C:2):1,D:3);"))
+```
+
+
+## Manipulating a phylogenetic tree in R 
+
+Once you have your tree represented as a `phylo` object in R you will probably need to manipulate it in some way before it can be plotted or anaylsed. In this section, we'll learn how to do some basic manipulations on the tree.
+
+## Removing taxa (pruning the tree) {#pruning}
+
+Taxa can be removed from the tree using `drop.tip`. For example, compare the two trees below:
+
+```{r ,cache=FALSE}
+write.tree(mytree)
+tree2<-drop.tip(mytree,"C")
+write.tree(tree2)
+```
+
+You should see that `tree2a` has had the taxon called "C" removed, and that the branch lengths have been updated to reflect this.
+
+Groups of taxa can be removed simply by providing their names in a vector like this:
+
+```{r,cache=TRUE}
+tree2a<-drop.tip(tree2,c("A","C"))
+write.tree(tree2a)
+```
+
+## Extracting a particular clade {#extract-clade}
+
+Lets have a look at the carnivore tree (`CarnTree`).
+
+
+```{r carntree, echo= TRUE,cache=TRUE}
+CarnTree <- read.tree(file = "data/carnivores.tre")
+plot(CarnTree, cex=0.5)
+```
+
+Imagine we are only interested in the relationships between the cats in this tree (figure below). We can subset the tree in one of two ways. The first way is to identify the relevant ancestral node on the tree, and ask which species subtend from this node.
+
+The first job in this case is to identify the relevant ancestral node. A quick and dirty method of doing this is to plot the tree and use the `nodelabels` command to see the node numbers. You could either print the tree to the screen, or you could produce a PDF and open it in *Preview* or *Acrobat* to view it. It may be necessary to use small labels (` ...cex=0.5)`), and zoom in on the image. 
+
+```{r nodelabels,cache=TRUE}
+plot(CarnTree, type="cladogram", cex=0.5)
+nodelabels(cex=0.5)
+```
+
+If you are familiar with the genera in the Carnivora, you should see that the relevant node is node number 427. Armed with this information, we can find out which species subtend from this node using the `clade.members` command, which identifies all the tips that subtend from a particular ancestral node.
+
+```{r}
+clade.members(427,CarnTree,tip.labels=TRUE)
+```
+
+We can then use this list to exclude (with the `drop.tip` function) all the tips that are *not* in the list:
+
+```{r}
+catsp <- clade.members(427,CarnTree,tip.labels=TRUE)
+dropMe <- CarnTree$tip.label[!CarnTree$tip.label%in%catsp]
+CatTree <- drop.tip(CarnTree,dropMe)
+```
+
+An alternative, and easier, way to do this is to use the `extract.clade` function. This only works if you are interested in *all* of the descendents from the node. If the group you are interested in is polyphyletic then you should use `drop.tip`.
+
+```{r}
+CatTree <- extract.clade(CarnTree,427)
+```
+
+You should see from  the figure that the most distantly related cats are the cheetah (*Acinonyx jubatus*) and the lion (*Panthera leo*). Had we known this in the first instance we could have used the `mrca` function to identify the ancestral node that represents the most recent common ancestor.
+
+```{r}
+mrca(CarnTree)["Acinonyx_jubatus","Panthera_leo"]
+```
+
+## Relatedness between species
+
+If we want to know the evolutionary distance between species in the tree (known as the *patristic distance*), we can use the `cophenetic` function to create a matrix of pairwise distances, from which we can select elements by tip name. For example, obtaining the distance between the fox (*Vulpes vulpes*) and the wolf (*Canis lupus*) is trivial.
+
+```{r}
+distMat<-cophenetic(CarnTree)
+distMat["Vulpes_vulpes","Canis_lupus"]
+```
+
+We can also identify the closest relative of *Vulpes vulpes* by asking which is the minimum distance value (after exluding the self-relationship):
+
+```{r}
+x<-distMat["Vulpes_vulpes",]
+x<-x[names(x)!="Vulpes_vulpes"]
+x[which.min(x)]
+```
+
+## Saving your trees 
 
 One can save the tree out as either a Newick format tree or as a Nexus file.
 
